@@ -99,13 +99,13 @@ const GroupSelection = () => {
 
                 <div className="space-y-4 mt-6">
                   <div className="bg-white/70 backdrop-blur rounded-xl p-4">
-                    <p className="text-sm text-gray-600 mb-2">Person A - Alternative selling option</p>
-                    <p className="text-3xl font-bold text-gray-800">€{group.batnaA}</p>
-                  </div>
-
-                  <div className="bg-white/70 backdrop-blur rounded-xl p-4">
-                    <p className="text-sm text-gray-600 mb-2">Person B - Alternative selling option</p>
-                    <p className="text-3xl font-bold text-gray-800">€{group.batnaB}</p>
+                    <p className="text-sm text-gray-600 mb-2">Group Configuration</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {group.id === 1 && "Equal negotiation (No alternatives)"}
+                      {group.id === 2 && "Moderate advantage for one side"}
+                      {group.id === 3 && "Strong advantage for one side"}
+                      {group.id === 4 && "Very strong advantage for one side"}
+                    </p>
                   </div>
                 </div>
 
@@ -134,11 +134,11 @@ const GroupSelection = () => {
           <div className="flex items-start gap-3">
             <span className="text-2xl">ℹ️</span>
             <div className="flex-1 text-gray-700">
-              <p className="font-semibold mb-2">About Alternative Selling Options:</p>
+              <p className="font-semibold mb-2">About Groups:</p>
               <p className="text-sm leading-relaxed">
-                The alternative selling option represents the amount each person can receive if the negotiation fails. 
-                Person A always has €0 as alternative, while Person B's alternative varies by group. 
-                Choose your group wisely - it will affect the negotiation dynamics!
+                Each group has different negotiation dynamics. You will be randomly assigned as Person A or Person B after joining.
+                Your alternative selling option (the amount you can receive if negotiation fails) will be revealed after pairing.
+                Choose a group and find out your role!
               </p>
             </div>
           </div>
