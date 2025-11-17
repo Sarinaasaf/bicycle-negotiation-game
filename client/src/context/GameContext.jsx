@@ -61,12 +61,17 @@ export const GameProvider = ({ children }) => {
     const serverUrl = import.meta.env.VITE_API_URL || '';
     const socketOptions = {
       transports: ['websocket'],
-      reconnection: true
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 10,
+      timeout: 60000 // 60 seconds for Render cold start
     };
     const newSocket = serverUrl ? io(serverUrl, socketOptions) : io(socketOptions);
 
     newSocket.on('connect', () => {
       console.log('✅ Connected to server');
+      toast.success('Connected to server!');
       
       // Try to reconnect if we have a saved playerId
       const savedPlayerId = localStorage.getItem('playerId');
@@ -75,6 +80,13 @@ export const GameProvider = ({ children }) => {
         console.log('🔄 Attempting to reconnect player:', savedPlayerId);
         newSocket.emit('reconnect_player', { playerId: savedPlayerId });
       }
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+      toast.error('Server is waking up... Please wait 30 seconds', {
+        autoClose: 10000
+      });
     });
 
     newSocket.on('reconnected', (data) => {
@@ -91,7 +103,7 @@ export const GameProvider = ({ children }) => {
 
     newSocket.on('disconnect', () => {
       console.log('❌ Disconnected from server');
-      toast.error('Disconnected from server');
+      toast.warning('Disconnected from server. Reconnecting...');
     });
 
     newSocket.on('error', (data) => {

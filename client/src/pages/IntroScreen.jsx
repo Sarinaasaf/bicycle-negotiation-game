@@ -1,8 +1,29 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useGame } from '../context/GameContext';
+import { useState, useEffect } from 'react';
 
 const IntroScreen = () => {
   const navigate = useNavigate();
+  const { socket } = useGame();
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    if (socket) {
+      setIsConnected(socket.connected);
+      
+      const handleConnect = () => setIsConnected(true);
+      const handleDisconnect = () => setIsConnected(false);
+      
+      socket.on('connect', handleConnect);
+      socket.on('disconnect', handleDisconnect);
+      
+      return () => {
+        socket.off('connect', handleConnect);
+        socket.off('disconnect', handleDisconnect);
+      };
+    }
+  }, [socket]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -110,13 +131,37 @@ const IntroScreen = () => {
           transition={{ delay: 1, type: 'spring', stiffness: 150 }}
           className="text-center"
         >
+          {!isConnected && (
+            <div className="mb-4 bg-orange-100 border-2 border-orange-300 rounded-xl p-4">
+              <div className="flex items-center justify-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
+                <p className="text-orange-700 font-semibold">
+                  Connecting to server... (This may take up to 30 seconds on first load)
+                </p>
+              </div>
+            </div>
+          )}
+          
           <button
             onClick={() => navigate('/select-group')}
-            className="button-primary inline-flex items-center gap-3 text-xl"
+            disabled={!isConnected}
+            className={`button-primary inline-flex items-center gap-3 text-xl ${
+              !isConnected ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             <span>👉</span>
-            <span>Start the Game</span>
+            <span>{isConnected ? 'Start the Game' : 'Waiting for Server...'}</span>
           </button>
+          
+          {isConnected && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-green-600 font-semibold mt-3"
+            >
+              ✅ Connected and ready!
+            </motion.p>
+          )}
         </motion.div>
 
         {/* Decorative Elements */}
