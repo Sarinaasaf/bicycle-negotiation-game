@@ -11,13 +11,13 @@ const IntroScreen = () => {
   useEffect(() => {
     if (socket) {
       setIsConnected(socket.connected);
-      
+
       const handleConnect = () => setIsConnected(true);
       const handleDisconnect = () => setIsConnected(false);
-      
+
       socket.on('connect', handleConnect);
       socket.on('disconnect', handleDisconnect);
-      
+
       return () => {
         socket.off('connect', handleConnect);
         socket.off('disconnect', handleDisconnect);
@@ -60,37 +60,13 @@ const IntroScreen = () => {
               Welcome to the Bicycle Negotiation Game!
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6 my-8">
-              {/* Person A */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200"
-              >
-                <div className="text-center">
-                  <div className="text-5xl mb-4">🎡</div>
-                  <h3 className="text-2xl font-bold text-blue-700 mb-2">Person A</h3>
-                  <p className="text-gray-600">
-                    Owns the <span className="font-semibold">bicycle wheels</span>
-                  </p>
-                  <p className="text-3xl font-bold text-blue-600 mt-3">€200</p>
-                </div>
-              </motion.div>
-
-              {/* Person B */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200"
-              >
-                <div className="text-center">
-                  <div className="text-5xl mb-4">🚴</div>
-                  <h3 className="text-2xl font-bold text-purple-700 mb-2">Person B</h3>
-                  <p className="text-gray-600">
-                    Owns the <span className="font-semibold">bicycle frame</span>
-                  </p>
-                  <p className="text-3xl font-bold text-purple-600 mt-3">€600</p>
-                </div>
-              </motion.div>
-            </div>
+            {/* Text explanation only – no more large boxes */}
+            <p className="text-center">
+              Two people each own different parts of a bicycle. 
+              One year ago, <span className="font-semibold">Person A paid €200</span> 
+              for the wheels, and <span className="font-semibold">Person B paid €600</span> 
+              for the bicycle frame.
+            </p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -99,28 +75,39 @@ const IntroScreen = () => {
               className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 my-6"
             >
               <p className="text-center text-xl">
-                <span className="font-bold text-green-700">Only together</span> can they assemble a complete bicycle and sell it for{' '}
-                <span className="text-3xl font-bold text-green-600">€1,000</span>
+                <span className="font-bold text-green-700">Only together</span>{' '}
+                can they assemble a complete bicycle and sell it today for{' '}
+                <span className="text-3xl font-bold text-green-600">€1,000</span>.
               </p>
             </motion.div>
 
-            <div className="space-y-4 mt-8">
-              <p className="text-center">
-                They must decide how the <span className="font-bold">€1,000</span> should be divided between them if a negotiation takes place.
-              </p>
+            <p className="text-center">
+              They must now decide how the <span className="font-bold">€1,000</span> 
+              should be divided between them.
+            </p>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="bg-yellow-50 rounded-xl p-4 border-l-4 border-yellow-400"
-              >
-                <p className="text-gray-700">
-                  ⚠️ <span className="font-semibold">Important:</span> For this negotiation, both parties also receive an{' '}
-                  <span className="font-semibold">alternative selling option</span>. If the negotiation fails, this alternative option is automatically activated.
-                </p>
-              </motion.div>
-            </div>
+            <p className="text-center text-sm text-gray-600">
+              The old amounts (€200 and €600) are simply historical purchase prices.
+              They do <span className="font-semibold">not</span> determine how the €1,000 
+              is split today—they only describe what each person originally paid 
+              one year ago.
+            </p>
+
+            {/* BATNA / Alternative Option */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="bg-yellow-50 rounded-xl p-4 border-l-4 border-yellow-400"
+            >
+              <p className="text-gray-700">
+                ⚠️ <span className="font-semibold">Important:</span> In the experiment,
+                each participant also receives an alternative selling option 
+                (their BATNA). If the negotiation fails, this alternative option 
+                is automatically activated. The value of this option differs 
+                between groups and becomes a key factor in the negotiation.
+              </p>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -141,7 +128,7 @@ const IntroScreen = () => {
               </div>
             </div>
           )}
-          
+
           <button
             onClick={() => navigate('/select-group')}
             disabled={!isConnected}
@@ -149,10 +136,9 @@ const IntroScreen = () => {
               !isConnected ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
-            <span>👉</span>
-            <span>{isConnected ? 'Start the Game' : 'Waiting for Server...'}</span>
+            👉 Start the Game
           </button>
-          
+
           {isConnected && (
             <motion.p
               initial={{ opacity: 0 }}
@@ -164,9 +150,12 @@ const IntroScreen = () => {
           )}
         </motion.div>
 
-        {/* Decorative Elements */}
+        {/* Decorative Icons */}
         <div className="fixed top-10 left-10 text-6xl opacity-20 animate-float">🚲</div>
-        <div className="fixed bottom-10 right-10 text-6xl opacity-20 animate-float" style={{ animationDelay: '1s' }}>
+        <div
+          className="fixed bottom-10 right-10 text-6xl opacity-20 animate-float"
+          style={{ animationDelay: '1s' }}
+        >
           💰
         </div>
       </motion.div>
