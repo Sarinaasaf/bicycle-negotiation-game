@@ -6,10 +6,10 @@ import { joinGame } from '../services/api';
 import { toast } from 'react-toastify';
 
 const groups = [
-  { id: 1, batnaA: 0, batnaB: 0, color: 'from-blue-400 to-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-300' },
-  { id: 2, batnaA: 0, batnaB: 300, color: 'from-green-400 to-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300' },
-  { id: 3, batnaA: 0, batnaB: 500, color: 'from-orange-400 to-orange-600', bgColor: 'bg-orange-50', borderColor: 'border-orange-300' },
-  { id: 4, batnaA: 0, batnaB: 600, color: 'from-red-400 to-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300' },
+  { id: 1, batnaA: 0.00, batnaB: 0.00, label: "BATNA A = 0, BATNA B = 0", color: 'from-blue-400 to-blue-600', bgColor: 'bg-blue-500' },
+  { id: 2, batnaA: 0.00, batnaB: 250, label: "BATNA A = 0, BATNA B = 250", color: 'from-green-400 to-green-600', bgColor: 'bg-green-500' },
+  { id: 3, batnaA: 0.00, batnaB: 500, label: "BATNA A = 0, BATNA B = 500", color: 'from-orange-400 to-orange-600', bgColor: 'bg-orange-500' },
+  { id: 4, batnaA: 0.00, batnaB: 750, label: "BATNA A = 0, BATNA B = 750", color: 'from-red-400 to-red-600', bgColor: 'bg-red-500' }
 ];
 
 const GroupSelection = () => {
@@ -85,7 +85,6 @@ const GroupSelection = () => {
               className={`
                 ${group.bgColor} 
                 ${selectedGroup === group.id ? 'ring-4 ring-offset-2 ring-blue-500' : ''}
-                border-2 ${group.borderColor}
                 rounded-3xl p-8 cursor-pointer
                 transform transition-all duration-300
                 hover:shadow-2xl
@@ -93,9 +92,16 @@ const GroupSelection = () => {
               `}
             >
               <div className="text-center">
+
+                {/* Group Title */}
                 <div className={`inline-block bg-gradient-to-r ${group.color} text-white text-3xl font-bold px-6 py-3 rounded-full mb-4`}>
                   Group {group.id}
                 </div>
+
+                {/* NEW BATNA INFO */}
+                <p className="text-lg font-semibold text-white">
+                  BATNA A: {group.batnaA} | BATNA B: {group.batnaB}
+                </p>
 
                 <div className="space-y-4 mt-6">
                   <div className="bg-white/70 backdrop-blur rounded-xl p-4">
@@ -159,3 +165,4 @@ const GroupSelection = () => {
 };
 
 export default GroupSelection;
+
