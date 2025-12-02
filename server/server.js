@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import connectDB from './config/db.js';
 import gameRoutes from './routes/gameRoutes.js';
 import { setupSocketHandlers } from './socket/socketHandlers.js';
@@ -12,15 +13,16 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
+// Socket.io
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ['GET', 'POST'],
-    credentials: true,
-  },
+    credentials: true
+  }
 });
 
-// Connect to MongoDB
+// MongoDB verbinden
 connectDB();
 
 // Middleware
@@ -31,18 +33,20 @@ if (process.env.CLIENT_URL) {
 }
 app.use(express.json());
 
-// API routes
+// API-Routes
 app.use('/api/game', gameRoutes);
+
+// ⚠️ KEIN Frontend-Serving mehr hier – nur API/Socket
+// Wenn du später ein gebautes Frontend hast, können wir das wieder aktivieren.
 
 // Socket.io setup
 setupSocketHandlers(io);
 
-// Health check route
+// Health-Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, () => {
