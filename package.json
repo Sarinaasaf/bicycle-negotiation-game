@@ -9,10 +9,18 @@
     "client": "cd client && npm run dev",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install"
   },
-  "keywords": ["negotiation", "game", "react", "nodejs"],
+  "keywords": [
+    "negotiation",
+    "game",
+    "react",
+    "nodejs"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
   }
 }
