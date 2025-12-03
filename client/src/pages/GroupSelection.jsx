@@ -5,11 +5,36 @@ import { useGame } from '../context/GameContext';
 import { joinGame } from '../services/api';
 import { toast } from 'react-toastify';
 
+// Gruppen-Definition: ohne sichtbare BATNA-Labels
 const groups = [
-  { id: 1, batnaA: 0.00, batnaB: 0.00, label: "BATNA A = 0, BATNA B = 0", color: 'from-blue-400 to-blue-600', bgColor: 'bg-blue-500' },
-  { id: 2, batnaA: 0.00, batnaB: 250, label: "BATNA A = 0, BATNA B = 250", color: 'from-green-400 to-green-600', bgColor: 'bg-green-500' },
-  { id: 3, batnaA: 0.00, batnaB: 500, label: "BATNA A = 0, BATNA B = 500", color: 'from-orange-400 to-orange-600', bgColor: 'bg-orange-500' },
-  { id: 4, batnaA: 0.00, batnaB: 750, label: "BATNA A = 0, BATNA B = 750", color: 'from-red-400 to-red-600', bgColor: 'bg-red-500' }
+  {
+    id: 1,
+    batnaA: 0.0,
+    batnaB: 0.0,
+    bgColor: 'bg-blue-500',
+    color: 'from-blue-500 to-blue-400',
+  },
+  {
+    id: 2,
+    batnaA: 0.0,
+    batnaB: 250,
+    bgColor: 'bg-green-500',
+    color: 'from-green-500 to-green-400',
+  },
+  {
+    id: 3,
+    batnaA: 0.0,
+    batnaB: 500,
+    bgColor: 'bg-orange-500',
+    color: 'from-orange-500 to-orange-400',
+  },
+  {
+    id: 4,
+    batnaA: 0.0,
+    batnaB: 750,
+    bgColor: 'bg-red-500',
+    color: 'from-red-500 to-red-400',
+  },
 ];
 
 const GroupSelection = () => {
@@ -30,14 +55,14 @@ const GroupSelection = () => {
     try {
       // Join game via API
       const response = await joinGame(groupId, socket.id);
-      
+
       if (response.success) {
         setPlayerId(response.player.playerId);
         setGroupNumber(response.player.groupNumber);
         setGameStatus('waiting');
-        
+
         toast.success('Joined successfully! Finding a partner...');
-        
+
         // Navigate to waiting room
         navigate('/waiting');
       }
@@ -83,7 +108,7 @@ const GroupSelection = () => {
               whileTap={{ scale: 0.98 }}
               onClick={() => !loading && handleSelectGroup(group.id)}
               className={`
-                ${group.bgColor} 
+                ${group.bgColor}
                 ${selectedGroup === group.id ? 'ring-4 ring-offset-2 ring-blue-500' : ''}
                 rounded-3xl p-8 cursor-pointer
                 transform transition-all duration-300
@@ -92,15 +117,16 @@ const GroupSelection = () => {
               `}
             >
               <div className="text-center">
-
                 {/* Group Title */}
-                <div className={`inline-block bg-gradient-to-r ${group.color} text-white text-3xl font-bold px-6 py-3 rounded-full mb-4`}>
+                <div
+                  className={`inline-block bg-gradient-to-r ${group.color} text-white text-3xl font-bold px-6 py-3 rounded-full mb-4`}
+                >
                   Group {group.id}
                 </div>
 
-                {/* NEW BATNA INFO */}
+                {/* Hinweis statt BATNA */}
                 <p className="text-lg font-semibold text-white">
-                  BATNA A: {group.batnaA} | BATNA B: {group.batnaB}
+                  You will be randomly assigned as Person A or Person B in this group.
                 </p>
 
                 <div className="space-y-4 mt-6">
@@ -136,9 +162,10 @@ const GroupSelection = () => {
             <div className="flex-1 text-gray-700">
               <p className="font-semibold mb-2">About Groups:</p>
               <p className="text-sm leading-relaxed">
-                Each group has different negotiation dynamics. You will be randomly assigned as Person A or Person B after joining.
-                Your alternative selling option (the amount you can receive if negotiation fails) will be revealed after pairing.
-                Choose a group and find out your role!
+                Each group has different negotiation dynamics. You will be randomly assigned as
+                Person A or Person B after joining. Your alternative selling option (the amount you
+                can receive if negotiation fails) will be revealed after pairing. Choose a group and
+                find out your role!
               </p>
             </div>
           </div>
@@ -165,4 +192,3 @@ const GroupSelection = () => {
 };
 
 export default GroupSelection;
-
