@@ -45,10 +45,13 @@ app.use(express.json());
 // API-Routes
 app.use('/api/game', gameRoutes);
 
-// Excel-Export-Route: liefert immer eine aktuelle Excel mit allen Spielen
+// ======================
+// Excel-Export-Route
+// ======================
+// Liefert ALLE RUNDEN aller Spiele als Excel-Datei
 app.get('/api/export-excel', async (req, res) => {
   try {
-    // Alle Spiele aus der DB holen
+    // Alle Spiele inkl. Runden laden
     const games = await Game.find().lean();
 
     const workbook = new ExcelJS.Workbook();
@@ -66,27 +69,43 @@ app.get('/api/export-excel', async (req, res) => {
       'Timestamp',
     ]);
 
-    // Datenzeilen – Feldnamen ggf. an dein Schema anpassen
-    games.forEach((g) => {
-      const pairId = g.pairId ?? g.pairID ?? g.pair ?? '';
-      const group = g.group ?? g.groupId ?? g.groupNumber ?? '';
-      const round = g.round ?? g.roundNumber ?? '';
-      const proposer = g.proposer ?? '';
-      const offerA = g.offerA ?? g.offerAAmount ?? '';
-      const offerB = g.offerB ?? g.offerBAmount ?? '';
-      const response = g.response ?? '';
-      const timestamp = g.timestamp ?? g.createdAt ?? '';
+    // Für jedes Spiel alle Runden einzeln eintragen
+    games.forEach((game) => {
+      const pairId = game.pairId;
+      const group = game.groupNumber;
 
-      sheet.addRow([
-        pairId,
-        group,
-        round,
-        proposer,
-        offerA,
-        offerB,
-        response,
-        timestamp,
-      ]);
+      (game.rounds || []).forEach((round) => {
+        // Proposer lesbar machen
+        const proposer =
+          round.proposer === 'A'
+            ? 'Person A'
+            : round.proposer === 'B'
+            ? 'Person B'
+            : round.proposer;
+
+        // Response lesbarer Text
+        let responseText = round.response;
+        if (round.response === 'too_low') {
+          responseText = 'Too low - counteroffer';
+        } else if (round.response === 'accept') {
+          responseText = 'Accept - offer accepted';
+        } else if (round.response === 'better_offer') {
+          responseText = 'Better offer outside option';
+        } else if (round.response === 'not_accept') {
+          responseText = 'Not accept';
+        }
+
+        sheet.addRow([
+          pairId,                          // Pair ID
+          group,                           // Group (1–4)
+          round.roundNumber,               // Runden-Nummer
+          proposer,                        // Person A / Person B
+          round.offerA,                    // Angebot A
+          round.offerB,                    // Angebot B
+          responseText,                    // Antwort
+          round.timestamp || game.createdAt, // Zeit
+        ]);
+      });
     });
 
     // Download-Header setzen
