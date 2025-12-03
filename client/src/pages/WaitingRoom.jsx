@@ -23,33 +23,28 @@ const WaitingRoom = () => {
       return;
     }
 
-    // Request pairing
     socket.emit('join_game', { playerId });
 
-    // Listen for pair found
     socket.on('pair_found', (data) => {
       console.log('Pair found:', data);
-      
+
       setRole(data.role);
       setPairId(data.pairId);
       setBatna(data.batna);
       setCurrentTurn(data.currentTurn);
       setGameStatus('active');
-      
+
       toast.success(`Paired successfully! You are Person ${data.role}`);
-      
-      // Navigate to negotiation screen
+
       setTimeout(() => {
         navigate('/negotiate');
       }, 1500);
     });
 
-    // Listen for waiting status
     socket.on('waiting_for_pair', (data) => {
       console.log('Waiting for pair:', data.message);
     });
-    
-    // Listen for reconnection success
+
     socket.on('reconnected', (data) => {
       console.log('Reconnected to active game:', data);
       navigate('/negotiate');
@@ -70,9 +65,7 @@ const WaitingRoom = () => {
         transition={{ duration: 0.5 }}
         className="max-w-2xl w-full text-center"
       >
-        {/* Main Card */}
         <div className="glass-effect rounded-3xl p-12">
-          {/* Animated Icon */}
           <motion.div
             animate={{
               scale: [1, 1.2, 1],
@@ -88,12 +81,10 @@ const WaitingRoom = () => {
             🔄
           </motion.div>
 
-          {/* Title */}
           <h1 className="text-4xl font-bold gradient-text mb-4">
             Finding Your Partner
           </h1>
 
-          {/* Loading Animation */}
           <div className="flex justify-center items-center gap-2 mb-8">
             {[0, 1, 2].map((index) => (
               <motion.div
@@ -111,12 +102,10 @@ const WaitingRoom = () => {
             ))}
           </div>
 
-          {/* Message */}
           <p className="text-xl text-gray-600 mb-6">
             Please wait while we find another player in your group...
           </p>
 
-          {/* Player Info */}
           <div className="bg-white/50 backdrop-blur rounded-2xl p-6 mb-6">
             <div className="grid grid-cols-2 gap-4 text-left">
               <div>
@@ -129,21 +118,8 @@ const WaitingRoom = () => {
               </div>
             </div>
           </div>
-
-          {/* Fun Facts */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-            className="bg-blue-50 rounded-xl p-4 border border-blue-200"
-          >
-            <p className="text-sm text-gray-700">
-              💡 <span className="font-semibold">Negotiation Tip:</span> Remember, cooperation can lead to better outcomes for both parties!
-            </p>
-          </motion.div>
         </div>
 
-        {/* Progress Indicator */}
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: '100%' }}
@@ -151,7 +127,6 @@ const WaitingRoom = () => {
           className="h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mt-8"
         />
 
-        {/* Cancel Button */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

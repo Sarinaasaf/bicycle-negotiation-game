@@ -91,18 +91,17 @@ const NegotiationScreen = () => {
     setOfferB(TOTAL_AMOUNT - value);
   };
 
-  // NEU: manuelle Eingabe A
+  // manuelle Eingabe A
   const handleOfferAInputChange = (e) => {
     const value = Number(e.target.value);
     if (Number.isNaN(value)) return;
 
-    // wir begrenzen auf 0–1000, Rest macht die Validierung
     const clamped = Math.max(0, Math.min(TOTAL_AMOUNT, value));
     setOfferA(clamped);
     setOfferB(TOTAL_AMOUNT - clamped);
   };
 
-  // NEU: manuelle Eingabe B
+  // manuelle Eingabe B
   const handleOfferBInputChange = (e) => {
     const value = Number(e.target.value);
     if (Number.isNaN(value)) return;
@@ -541,12 +540,14 @@ const NegotiationScreen = () => {
                 Offer Received!
               </h2>
 
-              {/* Angebot */}
+              {/* Angebot + Alternativen */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 mb-6">
                 <p className="text-sm text-gray-600 mb-3 text-center">
                   Person {pendingOffer.proposer} proposes:
                 </p>
-                <div className="grid grid-cols-2 gap-4">
+
+                {/* vorgeschlagene Aufteilung */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="bg-blue-100 rounded-xl p-4 text-center">
                     <p className="text-sm text-gray-600 mb-1">Person A</p>
                     <p className="text-3xl font-bold text-blue-600">
@@ -557,6 +558,24 @@ const NegotiationScreen = () => {
                     <p className="text-sm text-gray-600 mb-1">Person B</p>
                     <p className="text-3xl font-bold text-purple-600">
                       €{pendingOffer.offerB}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Alternativen anzeigen */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/70 rounded-xl p-3 text-center">
+                    <p className="text-xs text-gray-600 mb-1">Your alternative</p>
+                    <p className="text-lg font-bold text-blue-700">
+                      €{batna}
+                    </p>
+                  </div>
+                  <div className="bg-white/70 rounded-xl p-3 text-center">
+                    <p className="text-xs text-gray-600 mb-1">
+                      Opponent&apos;s alternative
+                    </p>
+                    <p className="text-lg font-bold text-red-600">
+                      €{opponentAlternative}
                     </p>
                   </div>
                 </div>

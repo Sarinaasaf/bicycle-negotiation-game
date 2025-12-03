@@ -1,85 +1,79 @@
+// server/controllers/gameController.js
+
 import Player from '../models/Player.js';
 import Game from '../models/Game.js';
 import { nanoid } from 'nanoid';
 
-// Get BATNA values based on group
+// BATNA-Werte je Gruppe
 const getBATNA = (groupNumber) => {
-  // A hat immer 0, B hat je nach Gruppe 0 / 250 / 500 / 750
   const batnaMap = {
     1: { A: 0, B: 0 },
     2: { A: 0, B: 250 },
     3: { A: 0, B: 500 },
-    4: { A: 0, B: 750 }
+    4: { A: 0, B: 750 },
   };
   return batnaMap[groupNumber];
 };
 
-// Create player and join group
+// Spieler erstellen & in Warteschlange stellen
 export const joinGame = async (req, res) => {
   try {
     const { groupNumber, socketId } = req.body;
 
     if (!groupNumber || !socketId) {
-      return res.status(400).json({ message: 'Group number and socket ID required' });
+      return res
+        .status(400)
+        .json({ message: 'Group number and socket ID required' });
     }
 
-    // Generate unique player ID
     const playerId = `Player_${nanoid(6)}`;
 
-    // Create new player
     const player = await Player.create({
       playerId,
       groupNumber,
       socketId,
-      isWaiting: true
+      isWaiting: true,
     });
 
     res.status(201).json({
       success: true,
       player: {
         playerId: player.playerId,
-        groupNumber: player.groupNumber
-      }
+        groupNumber: player.groupNumber,
+      },
     });
   } catch (error) {
+    console.error('Error in joinGame:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Find and pair waiting players
+// Wartenden Partner finden & Spiel anlegen
 export const findPair = async (playerId) => {
   try {
     const currentPlayer = await Player.findOne({ playerId, isWaiting: true });
-    
-    if (!currentPlayer) {
-      return null;
-    }
 
-    // Find another waiting player in the same group
+    if (!currentPlayer) return null;
+
     const waitingPlayer = await Player.findOne({
       groupNumber: currentPlayer.groupNumber,
       isWaiting: true,
       playerId: { $ne: playerId },
-      socketId: { $exists: true, $ne: null }
+      socketId: { $exists: true, $ne: null },
     });
 
-    if (!waitingPlayer) {
-      return null;
-    }
-    
-    // Extra validation: ensure player still exists and is valid
+    if (!waitingPlayer) return null;
+
     if (!waitingPlayer.socketId) {
-      // Clean up invalid player
       await Player.deleteOne({ playerId: waitingPlayer.playerId });
       return null;
     }
 
-    // Generate pair ID
     const pairId = `Pair_${nanoid(6)}`;
 
-    // Randomly assign roles
+    // Rollen zufällig
     const roles = Math.random() < 0.5 ? ['A', 'B'] : ['B', 'A'];
-    
+
     currentPlayer.role = roles[0];
     currentPlayer.pairId = pairId;
     currentPlayer.isWaiting = false;
@@ -90,23 +84,31 @@ export const findPair = async (playerId) => {
     waitingPlayer.isWaiting = false;
     await waitingPlayer.save();
 
-    // Get BATNA values
     const batna = getBATNA(currentPlayer.groupNumber);
 
-    // Create game
+    // 🔥 Zufällig, wer anfängt
+    const startingTurn = Math.random() < 0.5 ? 'A' : 'B';
+    console.log('🎲 Starting turn for', pairId, '->', startingTurn);
+
     const game = await Game.create({
       pairId,
       groupNumber: currentPlayer.groupNumber,
       playerA: {
-        playerId: currentPlayer.role === 'A' ? currentPlayer.playerId : waitingPlayer.playerId,
-        batna: batna.A
+        playerId:
+          currentPlayer.role === 'A'
+            ? currentPlayer.playerId
+            : waitingPlayer.playerId,
+        batna: batna.A,
       },
       playerB: {
-        playerId: currentPlayer.role === 'B' ? currentPlayer.playerId : waitingPlayer.playerId,
-        batna: batna.B
+        playerId:
+          currentPlayer.role === 'B'
+            ? currentPlayer.playerId
+            : waitingPlayer.playerId,
+        batna: batna.B,
       },
       status: 'active',
-      currentTurn: 'A'
+      currentTurn: startingTurn,
     });
 
     return {
@@ -116,16 +118,16 @@ export const findPair = async (playerId) => {
           playerId: currentPlayer.playerId,
           role: currentPlayer.role,
           socketId: currentPlayer.socketId,
-          batna: currentPlayer.role === 'A' ? batna.A : batna.B
+          batna: currentPlayer.role === 'A' ? batna.A : batna.B,
         },
         [waitingPlayer.playerId]: {
           playerId: waitingPlayer.playerId,
           role: waitingPlayer.role,
           socketId: waitingPlayer.socketId,
-          batna: waitingPlayer.role === 'A' ? batna.A : batna.B
-        }
+          batna: waitingPlayer.role === 'A' ? batna.A : batna.B,
+        },
       },
-      game
+      game,
     };
   } catch (error) {
     console.error('Error in findPair:', error);
@@ -133,24 +135,22 @@ export const findPair = async (playerId) => {
   }
 };
 
-// Get game state
+// Game-Status holen
 export const getGameState = async (req, res) => {
   try {
     const { pairId } = req.params;
-    
     const game = await Game.findOne({ pairId });
-    
     if (!game) {
       return res.status(404).json({ message: 'Game not found' });
     }
-
     res.json({ success: true, game });
   } catch (error) {
+    console.error('Error in getGameState:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Submit offer
+// Angebot (nur Validierung, eigentliche Kommunikation über Socket)
 export const submitOffer = async (req, res) => {
   try {
     const { pairId, playerId, offerA, offerB } = req.body;
@@ -177,14 +177,15 @@ export const submitOffer = async (req, res) => {
     res.json({
       success: true,
       offer: { offerA, offerB },
-      waitingForResponse: true
+      waitingForResponse: true,
     });
   } catch (error) {
+    console.error('Error in submitOffer:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Submit response
+// Antwort
 export const submitResponse = async (req, res) => {
   try {
     const { pairId, playerId, response, offerA, offerB } = req.body;
@@ -196,16 +197,14 @@ export const submitResponse = async (req, res) => {
       return res.status(404).json({ message: 'Game or player not found' });
     }
 
-    // Add round to history
     game.rounds.push({
       roundNumber: game.currentRound,
       proposer: game.currentTurn,
       offerA,
       offerB,
-      response
+      response,
     });
 
-    // Handle response
     if (response === 'accept') {
       game.status = 'completed';
       game.result = {
@@ -214,7 +213,7 @@ export const submitResponse = async (req, res) => {
         finalOfferB: offerB,
         payoutA: offerA,
         payoutB: offerB,
-        reason: 'Offer accepted'
+        reason: 'Offer accepted',
       };
       game.completedAt = new Date();
     } else if (response === 'not_accept') {
@@ -223,25 +222,22 @@ export const submitResponse = async (req, res) => {
         type: 'failed',
         payoutA: 0,
         payoutB: game.playerB.batna,
-        reason: 'Negotiation terminated'
+        reason: 'Negotiation terminated',
       };
       game.completedAt = new Date();
     } else {
-      // Continue negotiation
       game.currentRound += 1;
-      
+
       if (game.currentRound > 10) {
-        // Max rounds reached
         game.status = 'failed';
         game.result = {
           type: 'failed',
           payoutA: 0,
           payoutB: game.playerB.batna,
-          reason: 'Maximum rounds reached'
+          reason: 'Maximum rounds reached',
         };
         game.completedAt = new Date();
       } else {
-        // Switch turn
         game.currentTurn = game.currentTurn === 'A' ? 'B' : 'A';
       }
     }
@@ -250,9 +246,10 @@ export const submitResponse = async (req, res) => {
 
     res.json({
       success: true,
-      game
+      game,
     });
   } catch (error) {
+    console.error('Error in submitResponse:', error);
     res.status(500).json({ message: error.message });
   }
 };
