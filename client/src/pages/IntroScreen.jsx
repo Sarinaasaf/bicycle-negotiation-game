@@ -60,12 +60,12 @@ const IntroScreen = () => {
               Welcome to the Bicycle Negotiation Game!
             </p>
 
-            {/* Text explanation only – no more large boxes */}
+            {/* Text explanation only */}
             <p className="text-center">
-              Two people each own different parts of a bicycle. 
-              One year ago, <span className="font-semibold">Person A paid €200</span> 
-              for the wheels, and <span className="font-semibold">Person B paid €600</span> 
-              for the bicycle frame.
+              Two people each own different parts of a bicycle.
+              One year ago, <span className="font-semibold">Person A paid €200</span>
+              {' '}for the wheels, and <span className="font-semibold">Person B paid €600</span>
+              {' '}for the bicycle frame.
             </p>
 
             <motion.div
@@ -82,32 +82,18 @@ const IntroScreen = () => {
             </motion.div>
 
             <p className="text-center">
-              They must now decide how the <span className="font-bold">€1,000</span> 
-              should be divided between them.
+              They must now decide how the <span className="font-bold">€1,000</span>
+              {' '}should be divided between them.
             </p>
 
             <p className="text-center text-sm text-gray-600">
               The old amounts (€200 and €600) are simply historical purchase prices.
-              They do <span className="font-semibold">not</span> determine how the €1,000 
-              is split today—they only describe what each person originally paid 
-              one year ago.
+              They do <span className="font-semibold">not</span> determine how the €1,000
+              {' '}is split today—they only describe what each person originally paid
+              {' '}one year ago.
             </p>
 
-            {/* BATNA / Alternative Option */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="bg-yellow-50 rounded-xl p-4 border-l-4 border-yellow-400"
-            >
-              <p className="text-gray-700">
-                ⚠️ <span className="font-semibold">Important:</span> In the experiment,
-                each participant also receives an alternative selling option 
-                (their BATNA). If the negotiation fails, this alternative option 
-                is automatically activated. The value of this option differs 
-                between groups and becomes a key factor in the negotiation.
-              </p>
-            </motion.div>
+            {/* 🔥 BATNA-Kasten wurde komplett entfernt */}
           </div>
         </motion.div>
 
