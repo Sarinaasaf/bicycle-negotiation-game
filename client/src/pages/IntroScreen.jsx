@@ -56,13 +56,10 @@ const IntroScreen = () => {
           className="glass-effect rounded-3xl p-8 md:p-12 mb-8"
         >
           <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
-            
-            {/* Titel */}
             <p className="text-center font-semibold text-2xl text-gray-800 mb-6">
               Welcome to the Bicycle Negotiation Game!
             </p>
 
-            {/* DIE ERSTEN ZWEI SÄTZE – bleiben genau! */}
             <p className="text-center">
               Two people each own different parts of a bicycle. 
               One year ago, <span className="font-semibold">Person A paid €200</span> 
@@ -70,7 +67,6 @@ const IntroScreen = () => {
               for the bicycle frame.
             </p>
 
-            {/* Grüner Kasten bleibt */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -84,13 +80,11 @@ const IntroScreen = () => {
               </p>
             </motion.div>
 
-            {/* Satz darunter bleibt */}
             <p className="text-center">
               They must now decide how the <span className="font-bold">€1,000</span> 
               should be divided between them.
             </p>
 
-            {/* Historische Preise – bleibt */}
             <p className="text-center text-sm text-gray-600">
               The old amounts (€200 and €600) are simply historical purchase prices.
               They do <span className="font-semibold">not</span> determine how the €1,000 
@@ -98,9 +92,19 @@ const IntroScreen = () => {
               one year ago.
             </p>
 
-            {/* ❌ GELBER KASTEN — entfernt */}
-            {/* NOTHING HERE ANYMORE */}
-
+            {/* BATNA / Alternative Option – NUR die ersten zwei Sätze */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="bg-yellow-50 rounded-xl p-4 border-l-4 border-yellow-400"
+            >
+              <p className="text-gray-700">
+                ⚠️ <span className="font-semibold">Important:</span> In the experiment,
+                each participant also receives an alternative selling option (their BATNA).
+                If the negotiation fails, this alternative option is automatically activated.
+              </p>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -143,7 +147,7 @@ const IntroScreen = () => {
           )}
         </motion.div>
 
-        {/* Icons */}
+        {/* Decorative Icons */}
         <div className="fixed top-10 left-10 text-6xl opacity-20 animate-float">🚲</div>
         <div
           className="fixed bottom-10 right-10 text-6xl opacity-20 animate-float"
