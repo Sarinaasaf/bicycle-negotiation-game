@@ -1,3 +1,4 @@
+// server/server.js
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -45,13 +46,11 @@ app.use(express.json());
 // API-Routes
 app.use('/api/game', gameRoutes);
 
-// ======================
-// Excel-Export-Route
-// ======================
-// Liefert ALLE RUNDEN aller Spiele als Excel-Datei
+// ==================================================
+// 📊 Excel-Export-Route – ALLE RUNDEN aller Spiele
+// ==================================================
 app.get('/api/export-excel', async (req, res) => {
   try {
-    // Alle Spiele inkl. Runden laden
     const games = await Game.find().lean();
 
     const workbook = new ExcelJS.Workbook();
@@ -69,13 +68,12 @@ app.get('/api/export-excel', async (req, res) => {
       'Timestamp',
     ]);
 
-    // Für jedes Spiel alle Runden einzeln eintragen
+    // Jede Runde eintragen
     games.forEach((game) => {
       const pairId = game.pairId;
       const group = game.groupNumber;
 
       (game.rounds || []).forEach((round) => {
-        // Proposer lesbar machen
         const proposer =
           round.proposer === 'A'
             ? 'Person A'
@@ -83,32 +81,26 @@ app.get('/api/export-excel', async (req, res) => {
             ? 'Person B'
             : round.proposer;
 
-        // Response lesbarer Text
         let responseText = round.response;
-        if (round.response === 'too_low') {
-          responseText = 'Too low - counteroffer';
-        } else if (round.response === 'accept') {
-          responseText = 'Accept - offer accepted';
-        } else if (round.response === 'better_offer') {
-          responseText = 'Better offer outside option';
-        } else if (round.response === 'not_accept') {
-          responseText = 'Not accept';
-        }
+        if (round.response === 'too_low') responseText = 'Too low - counteroffer';
+        if (round.response === 'accept') responseText = 'Accept - offer accepted';
+        if (round.response === 'better_offer') responseText = 'Better offer outside option';
+        if (round.response === 'not_accept') responseText = 'Not accept';
 
         sheet.addRow([
-          pairId,                          // Pair ID
-          group,                           // Group (1–4)
-          round.roundNumber,               // Runden-Nummer
-          proposer,                        // Person A / Person B
-          round.offerA,                    // Angebot A
-          round.offerB,                    // Angebot B
-          responseText,                    // Antwort
-          round.timestamp || game.createdAt, // Zeit
+          pairId,
+          group,
+          round.roundNumber,
+          proposer,
+          round.offerA,
+          round.offerB,
+          responseText,
+          round.timestamp || game.createdAt,
         ]);
       });
     });
 
-    // Download-Header setzen
+    // Download-Header
     res.setHeader(
       'Content-Disposition',
       'attachment; filename="all_games.xlsx"'
@@ -134,6 +126,7 @@ app.get('/api/health', (req, res) => {
 // Socket.io setup
 setupSocketHandlers(io);
 
+// Server starten
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, () => {
