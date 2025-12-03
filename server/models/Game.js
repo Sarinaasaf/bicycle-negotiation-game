@@ -1,86 +1,72 @@
-import mongoose from 'mongoose';
+// Excel-Export-Route: liefert alle RUNDEN aller Spiele
+app.get('/api/export-excel', async (req, res) => {
+  try {
+    // Alle Spiele inkl. Runden laden
+    const games = await Game.find().lean();
 
-const roundSchema = new mongoose.Schema({
-  roundNumber: {
-    type: Number,
-    required: true
-  },
-  proposer: {
-    type: String,
-    enum: ['A', 'B'],
-    required: true
-  },
-  offerA: {
-    type: Number,
-    required: true
-  },
-  offerB: {
-    type: Number,
-    required: true
-  },
-  response: {
-    type: String,
-    enum: ['too_low', 'accept', 'better_offer', 'not_accept'],
-    required: true
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('All Negotiations');
+
+    // Kopfzeile
+    sheet.addRow([
+      'Pair ID',
+      'Group',
+      'Round',
+      'Proposer',
+      'Offer A (€)',
+      'Offer B (€)',
+      'Response',
+      'Timestamp',
+    ]);
+
+    // Für jedes Spiel ALLE Runden in einzelne Zeilen schreiben
+    games.forEach((game) => {
+      const pairId = game.pairId;
+      const group = game.groupNumber;
+
+      (game.rounds || []).forEach((round) => {
+        // Proposer lesbarer machen (optional)
+        const proposer =
+          round.proposer === 'A'
+            ? 'Person A'
+            : round.proposer === 'B'
+            ? 'Person B'
+            : round.proposer;
+
+        // Response lesbar machen (optional)
+        let responseText = round.response;
+        if (round.response === 'too_low') responseText = 'Too low - counteroffer';
+        if (round.response === 'accept') responseText = 'Accept - offer accepted';
+        if (round.response === 'better_offer') responseText = 'Better offer outside option';
+        if (round.response === 'not_accept') responseText = 'Not accept';
+
+        sheet.addRow([
+          pairId,
+          group,
+          round.roundNumber,
+          proposer,
+          round.offerA,
+          round.offerB,
+          responseText,
+          round.timestamp || game.createdAt,
+        ]);
+      });
+    });
+
+    // Download-Header setzen
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="all_games.xlsx"'
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error('Excel Export Error:', err);
+    res.status(500).send('Error generating Excel');
   }
 });
-
-const gameSchema = new mongoose.Schema({
-  pairId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  groupNumber: {
-    type: Number,
-    enum: [1, 2, 3, 4],
-    required: true
-  },
-  playerA: {
-    playerId: String,
-    batna: { type: Number, default: 0 }
-  },
-  playerB: {
-    playerId: String,
-    batna: Number
-  },
-  rounds: [roundSchema],
-  currentRound: {
-    type: Number,
-    default: 1
-  },
-  currentTurn: {
-    type: String,
-    enum: ['A', 'B'],
-    default: 'A'
-  },
-  status: {
-    type: String,
-    enum: ['waiting', 'active', 'completed', 'failed'],
-    default: 'waiting'
-  },
-  result: {
-    type: {
-      type: String,
-      enum: ['success', 'failed']
-    },
-    finalOfferA: Number,
-    finalOfferB: Number,
-    payoutA: Number,
-    payoutB: Number,
-    reason: String
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  completedAt: {
-    type: Date
-  }
-});
-
-export default mongoose.model('Game', gameSchema);

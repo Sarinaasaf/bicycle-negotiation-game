@@ -1,0 +1,15 @@
+# Query: BATNA A
+# ContextLines: 1
+
+5 results - 1 file
+
+client\src\pages\GroupSelection.jsx:
+    8  const groups = [
+  { id: 1, batnaA: 0.0, batnaB: 0.0 },
+  { id: 2, batnaA: 0.0, batnaB: 250 },
+  { id: 3, batnaA: 0.0, batnaB: 500 },
+  { id: 4, batnaA: 0.0, batnaB: 750 },
+];
+
+
+  102                  

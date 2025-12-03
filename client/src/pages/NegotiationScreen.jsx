@@ -91,6 +91,27 @@ const NegotiationScreen = () => {
     setOfferB(TOTAL_AMOUNT - value);
   };
 
+  // NEU: manuelle Eingabe A
+  const handleOfferAInputChange = (e) => {
+    const value = Number(e.target.value);
+    if (Number.isNaN(value)) return;
+
+    // wir begrenzen auf 0–1000, Rest macht die Validierung
+    const clamped = Math.max(0, Math.min(TOTAL_AMOUNT, value));
+    setOfferA(clamped);
+    setOfferB(TOTAL_AMOUNT - clamped);
+  };
+
+  // NEU: manuelle Eingabe B
+  const handleOfferBInputChange = (e) => {
+    const value = Number(e.target.value);
+    if (Number.isNaN(value)) return;
+
+    const clamped = Math.max(0, Math.min(TOTAL_AMOUNT, value));
+    setOfferB(clamped);
+    setOfferA(TOTAL_AMOUNT - clamped);
+  };
+
   useEffect(() => {
     if (!socket || !playerId || !role || !pairId) {
       navigate('/select-group');
@@ -231,38 +252,28 @@ const NegotiationScreen = () => {
           <p className="text-gray-600">Pair ID: {pairId}</p>
         </motion.div>
 
-        {/* 🔵 NEUE SUPER-KLARE STATUS-BAR */}
+        {/* Status-Bar */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-6"
+          className="glass-effect rounded-2xl p-6 mb-6"
         >
-          <div className="bg-white rounded-2xl shadow-lg border-4 border-blue-500 p-6 flex flex-col md:flex-row gap-6 items-stretch justify-between">
-            {/* YOUR ROLE */}
-            <div className="flex-1 text-center md:text-left">
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                Your role
-              </p>
-              <p className="text-3xl md:text-4xl font-extrabold text-blue-600 mt-2">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Your Role</p>
+              <p className="text-2xl font-bold text-blue-600">
                 YOU ARE PERSON {role}
               </p>
-              <p className="text-sm text-gray-600 mt-3">
-                If the negotiation fails, <span className="font-semibold">you receive</span>:
-              </p>
-              <p className="text-2xl font-extrabold text-blue-700 mt-1">
-                €{batna}
-              </p>
+              <p className="text-xs text-gray-500 mt-1">Your alternative:</p>
+              <p className="text-xl font-bold text-blue-600">€{batna}</p>
             </div>
 
-            {/* ROUND INFO */}
-            <div className="flex-1 text-center">
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                Round
-              </p>
-              <p className="text-3xl md:text-4xl font-extrabold text-purple-600 mt-2">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Round</p>
+              <p className="text-2xl font-bold text-purple-600">
                 {currentRound} / {maxRounds}
               </p>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                 <div
                   className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(currentRound / maxRounds) * 100}%` }}
@@ -270,36 +281,30 @@ const NegotiationScreen = () => {
               </div>
             </div>
 
-            {/* WHO IS ACTING NOW */}
-            <div className="flex-1 text-center md:text-right">
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                Who acts now?
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Current Turn</p>
+              <p className="text-2xl font-bold text-green-600">
+                Person {currentTurn}
               </p>
-
               {isMyTurn ? (
-                <>
-                  <p className="text-3xl md:text-4xl font-extrabold text-green-500 mt-2">
-                    YOUR TURN
-                  </p>
-                  <p className="text-sm md:text-base text-green-700 font-semibold mt-2">
-                    You must decide now – choose an offer or a response.
-                  </p>
-                </>
+                <motion.p
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  className="text-xs text-green-600 font-semibold mt-1"
+                >
+                  🚨 YOUR TURN – MAKE AN OFFER
+                </motion.p>
               ) : (
-                <>
-                  <p className="text-3xl md:text-4xl font-extrabold text-red-500 mt-2">
-                    OPPONENT&apos;S TURN
-                  </p>
-                  <p className="text-sm md:text-base text-red-700 font-semibold mt-2">
-                    Please wait. Person {currentTurn} is deciding.
-                  </p>
-                </>
+                <p className="text-xs text-gray-500 mt-1">
+                  Waiting for the other player...
+                </p>
               )}
-
-              <p className="text-xs text-gray-500 mt-4">
-                Opponent&apos;s alternative (what they get if negotiation fails):
+              <p className="text-xs text-gray-500 mt-3">
+                Opponent’s alternative:
               </p>
-              <p className="text-xl font-bold text-red-600 mt-1">€{opponentAlternative}</p>
+              <p className="text-xl font-bold text-red-600">
+                €{opponentAlternative}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -319,7 +324,8 @@ const NegotiationScreen = () => {
               {/* Eine gemeinsame Skala */}
               <div className="space-y-6 mb-8">
                 <p className="font-semibold text-gray-700">
-                  How should the <span className="font-bold">€1,000</span> be split between
+                  How should the{' '}
+                  <span className="font-bold">€1,000</span> be split between
                   Person A and Person B?
                 </p>
 
@@ -328,8 +334,9 @@ const NegotiationScreen = () => {
                   <span className="text-purple-600">Person B</span>
                 </div>
 
-                {/* farblich geteilte Skala */}
+                {/* farblich geteilte Skala + Eingabefelder */}
                 <div className="bg-blue-50 rounded-xl p-6">
+                  {/* Slider */}
                   <div className="relative w-full h-3 rounded-lg overflow-hidden bg-gray-200">
                     <div
                       className="absolute inset-0"
@@ -353,13 +360,47 @@ const NegotiationScreen = () => {
                     />
                   </div>
 
-                  <div className="flex justify-between items-center mt-4">
-                    <p className="text-lg font-bold text-blue-600">
-                      A receives: €{offerA}
-                    </p>
-                    <p className="text-lg font-bold text-purple-600">
-                      B receives: €{offerB}
-                    </p>
+                  {/* Eingabefelder */}
+                  <div className="flex justify-between items-center mt-4 gap-6">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-gray-500 mb-1">
+                        A receives
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-lg font-bold text-blue-600">
+                          €
+                        </span>
+                        <input
+                          type="number"
+                          min="0"
+                          max={TOTAL_AMOUNT}
+                          value={offerA}
+                          onChange={handleOfferAInputChange}
+                          disabled={!isMyTurn || isWaitingResponse}
+                          className="w-24 border border-blue-300 rounded-lg px-2 py-1 text-blue-600 font-bold text-lg bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-gray-500 mb-1">
+                        B receives
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-lg font-bold text-purple-600">
+                          €
+                        </span>
+                        <input
+                          type="number"
+                          min="0"
+                          max={TOTAL_AMOUNT}
+                          value={offerB}
+                          onChange={handleOfferBInputChange}
+                          disabled={!isMyTurn || isWaitingResponse}
+                          className="w-24 border border-purple-300 rounded-lg px-2 py-1 text-purple-600 font-bold text-lg bg-white"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -374,13 +415,17 @@ const NegotiationScreen = () => {
                   <p className="text-sm text-gray-600 mb-1">Total</p>
                   <p
                     className={`text-3xl font-bold ${
-                      offerA + offerB === TOTAL_AMOUNT ? 'text-green-600' : 'text-red-600'
+                      offerA + offerB === TOTAL_AMOUNT
+                        ? 'text-green-600'
+                        : 'text-red-600'
                     }`}
                   >
                     €{offerA + offerB}
                   </p>
                   {offerA + offerB !== TOTAL_AMOUNT && (
-                    <p className="text-xs text-red-600 mt-1">Must equal €1,000</p>
+                    <p className="text-xs text-red-600 mt-1">
+                      Must equal €1,000
+                    </p>
                   )}
                 </div>
               </div>
@@ -401,7 +446,9 @@ const NegotiationScreen = () => {
               {isWaitingResponse && (
                 <div className="text-center">
                   <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-3"></div>
-                  <p className="text-gray-600">Waiting for opponent&apos;s response...</p>
+                  <p className="text-gray-600">
+                    Waiting for opponent&apos;s response...
+                  </p>
                 </div>
               )}
 
@@ -449,10 +496,12 @@ const NegotiationScreen = () => {
                       </div>
                       <div className="text-sm space-y-1">
                         <p>
-                          A: <span className="font-bold">€{round.offerA}</span>
+                          A:{' '}
+                          <span className="font-bold">€{round.offerA}</span>
                         </p>
                         <p>
-                          B: <span className="font-bold">€{round.offerB}</span>
+                          B:{' '}
+                          <span className="font-bold">€{round.offerB}</span>
                         </p>
                         <p className="text-xs text-gray-600 mt-2">
                           Response:{' '}
@@ -528,7 +577,9 @@ const NegotiationScreen = () => {
                   >
                     <div className="text-3xl mb-2">{option.icon}</div>
                     <div className="text-lg mb-1">{option.label}</div>
-                    <div className="text-xs opacity-90">{option.description}</div>
+                    <div className="text-xs opacity-90">
+                      {option.description}
+                    </div>
                   </motion.button>
                 ))}
               </div>
