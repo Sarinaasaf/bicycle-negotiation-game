@@ -37,7 +37,13 @@ const responseOptions = [
   },
 ];
 
-// Mapping: für jede Gruppe Alternative von A und B
+// Historische Beiträge zum Fahrrad
+const CONTRIBUTIONS = {
+  A: 200,
+  B: 600,
+};
+
+// Mapping: für jede Gruppe Alternative (BATNA) von A und B
 const GROUP_ALTERNATIVES = {
   1: { A: 0, B: 0 },
   2: { A: 0, B: 250 },
@@ -76,6 +82,16 @@ const NegotiationScreen = () => {
 
   const isMyTurn = role === currentTurn;
   const maxRounds = 10;
+
+  // historische Beiträge
+  const yourContribution =
+    role === 'A' || role === 'B' ? CONTRIBUTIONS[role] : null;
+  const opponentContribution =
+    role === 'A'
+      ? CONTRIBUTIONS.B
+      : role === 'B'
+      ? CONTRIBUTIONS.A
+      : null;
 
   // Gegnerische Alternative aus Gruppennummer berechnen
   const opponentAlternative = (() => {
@@ -258,17 +274,28 @@ const NegotiationScreen = () => {
           className="glass-effect rounded-2xl p-6 mb-6"
         >
           <div className="grid grid-cols-3 gap-4 text-center">
+            {/* Deine Infos */}
             <div>
               <p className="text-sm text-gray-500 mb-1">Your Role</p>
               <p className="text-2xl font-bold text-blue-600">
                 YOU ARE PERSON {role}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Your alternative (BATNA, if no agreement):
+
+              {yourContribution !== null && (
+                <p className="text-xs text-gray-500 mt-2">
+                  You originally paid{' '}
+                  <span className="font-semibold">€{yourContribution}</span> for
+                  your part of the bicycle.
+                </p>
+              )}
+
+              <p className="text-xs text-gray-500 mt-3">
+                Your alternative if no agreement (BATNA):
               </p>
               <p className="text-xl font-bold text-blue-600">€{batna}</p>
             </div>
 
+            {/* Rundenanzeige */}
             <div>
               <p className="text-sm text-gray-500 mb-1">Round</p>
               <p className="text-2xl font-bold text-purple-600">
@@ -282,6 +309,7 @@ const NegotiationScreen = () => {
               </div>
             </div>
 
+            {/* Gegner-Infos */}
             <div>
               <p className="text-sm text-gray-500 mb-1">Current Turn</p>
               <p className="text-2xl font-bold text-green-600">
@@ -300,8 +328,19 @@ const NegotiationScreen = () => {
                   Waiting for the other player...
                 </p>
               )}
+
+              {opponentContribution !== null && (
+                <p className="text-xs text-gray-500 mt-3">
+                  Opponent originally paid{' '}
+                  <span className="font-semibold">
+                    €{opponentContribution}
+                  </span>{' '}
+                  for their part of the bicycle.
+                </p>
+              )}
+
               <p className="text-xs text-gray-500 mt-3">
-                Opponent’s alternative (BATNA, if no agreement):
+                Opponent&apos;s alternative if no agreement:
               </p>
               <p className="text-xl font-bold text-red-600">
                 €{opponentAlternative}
@@ -330,20 +369,18 @@ const NegotiationScreen = () => {
                   Person A and Person B?
                 </p>
 
-                {/* A/B Labels + Beitrag zum Fahrrad */}
-                <div className="flex justify-between text-sm font-semibold mb-1">
-                  <span className="text-blue-600">
-                    Person A
-                    <span className="block text-[11px] font-normal text-gray-500">
-                      Contributed €200 (wheels)
-                    </span>
-                  </span>
-                  <span className="text-purple-600 text-right">
-                    Person B
-                    <span className="block text-[11px] font-normal text-gray-500">
-                      Contributed €600 (frame)
-                    </span>
-                  </span>
+                <p className="text-xs text-gray-500 -mt-3">
+                  Person A originally paid <span className="font-semibold">€200</span>{' '}
+                  for the wheels. Person B originally paid{' '}
+                  <span className="font-semibold">€600</span> for the frame. These
+                  amounts are only historical purchase prices – they do{' '}
+                  <span className="font-semibold">not</span> determine how the
+                  €1,000 must be divided.
+                </p>
+
+                <div className="flex justify-between text-sm font-semibold mb-1 mt-2">
+                  <span className="text-blue-600">Person A</span>
+                  <span className="text-purple-600">Person B</span>
                 </div>
 
                 {/* farblich geteilte Skala + Eingabefelder */}
@@ -517,7 +554,7 @@ const NegotiationScreen = () => {
                         </p>
                         <p className="text-xs text-gray-600 mt-2">
                           Response:{' '}
-                          <span className="text-xs font-semibold">
+                          <span className="font-semibold">
                             {formatResponse(round.response)}
                           </span>
                         </p>
@@ -579,13 +616,15 @@ const NegotiationScreen = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      Your alternative (BATNA)
+                      Your alternative if no agreement
                     </p>
-                    <p className="text-lg font-bold text-blue-700">€{batna}</p>
+                    <p className="text-lg font-bold text-blue-700">
+                      €{batna}
+                    </p>
                   </div>
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      Opponent&apos;s alternative (BATNA)
+                      Opponent&apos;s alternative if no agreement
                     </p>
                     <p className="text-lg font-bold text-red-600">
                       €{opponentAlternative}
