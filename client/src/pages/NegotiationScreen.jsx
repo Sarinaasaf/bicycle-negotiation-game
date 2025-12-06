@@ -54,7 +54,7 @@ const NegotiationScreen = () => {
     playerId,
     role, // 'A' oder 'B'
     pairId,
-    batna, // eigene Alternative
+    batna, // eigene Alternative (BATNA)
     groupNumber, // Gruppennummer 1–4
     currentTurn,
     setCurrentTurn,
@@ -263,7 +263,9 @@ const NegotiationScreen = () => {
               <p className="text-2xl font-bold text-blue-600">
                 YOU ARE PERSON {role}
               </p>
-              <p className="text-xs text-gray-500 mt-1">Your alternative:</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Your alternative (BATNA, if no agreement):
+              </p>
               <p className="text-xl font-bold text-blue-600">€{batna}</p>
             </div>
 
@@ -299,7 +301,7 @@ const NegotiationScreen = () => {
                 </p>
               )}
               <p className="text-xs text-gray-500 mt-3">
-                Opponent’s alternative:
+                Opponent’s alternative (BATNA, if no agreement):
               </p>
               <p className="text-xl font-bold text-red-600">
                 €{opponentAlternative}
@@ -328,9 +330,20 @@ const NegotiationScreen = () => {
                   Person A and Person B?
                 </p>
 
+                {/* A/B Labels + Beitrag zum Fahrrad */}
                 <div className="flex justify-between text-sm font-semibold mb-1">
-                  <span className="text-blue-600">Person A</span>
-                  <span className="text-purple-600">Person B</span>
+                  <span className="text-blue-600">
+                    Person A
+                    <span className="block text-[11px] font-normal text-gray-500">
+                      Contributed €200 (wheels)
+                    </span>
+                  </span>
+                  <span className="text-purple-600 text-right">
+                    Person B
+                    <span className="block text-[11px] font-normal text-gray-500">
+                      Contributed €600 (frame)
+                    </span>
+                  </span>
                 </div>
 
                 {/* farblich geteilte Skala + Eingabefelder */}
@@ -504,7 +517,7 @@ const NegotiationScreen = () => {
                         </p>
                         <p className="text-xs text-gray-600 mt-2">
                           Response:{' '}
-                          <span className="font-semibold">
+                          <span className="text-xs font-semibold">
                             {formatResponse(round.response)}
                           </span>
                         </p>
@@ -565,14 +578,14 @@ const NegotiationScreen = () => {
                 {/* Alternativen anzeigen */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/70 rounded-xl p-3 text-center">
-                    <p className="text-xs text-gray-600 mb-1">Your alternative</p>
-                    <p className="text-lg font-bold text-blue-700">
-                      €{batna}
+                    <p className="text-xs text-gray-600 mb-1">
+                      Your alternative (BATNA)
                     </p>
+                    <p className="text-lg font-bold text-blue-700">€{batna}</p>
                   </div>
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      Opponent&apos;s alternative
+                      Opponent&apos;s alternative (BATNA)
                     </p>
                     <p className="text-lg font-bold text-red-600">
                       €{opponentAlternative}

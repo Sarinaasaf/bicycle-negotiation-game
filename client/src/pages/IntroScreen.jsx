@@ -60,6 +60,7 @@ const IntroScreen = () => {
               Welcome to the Bicycle Negotiation Game!
             </p>
 
+            {/* Text remains */}
             <p className="text-center">
               Two people each own different parts of a bicycle. 
               One year ago, <span className="font-semibold">Person A paid €200</span> 
@@ -92,19 +93,12 @@ const IntroScreen = () => {
               one year ago.
             </p>
 
-            {/* BATNA / Alternative Option – NUR die ersten zwei Sätze */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="bg-yellow-50 rounded-xl p-4 border-l-4 border-yellow-400"
-            >
-              <p className="text-gray-700">
-                ⚠️ <span className="font-semibold">Important:</span> In the experiment,
-                each participant also receives an alternative selling option (their BATNA).
-                If the negotiation fails, this alternative option is automatically activated.
-              </p>
-            </motion.div>
+            {/* ✨ ONLY TEXT — NO YELLOW BOX ANYMORE */}
+            <p className="text-center text-sm text-gray-700 mt-4">
+              In the experiment, each participant also receives an alternative
+              selling option (their BATNA). If the negotiation fails, this
+              alternative option is automatically activated.
+            </p>
           </div>
         </motion.div>
 
