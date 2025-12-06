@@ -37,13 +37,13 @@ const responseOptions = [
   },
 ];
 
-// Beiträge zum Fahrrad
+// kurzer Hinweis, wer wie viel ins Fahrrad gesteckt hat
 const CONTRIBUTIONS = {
   A: 200,
   B: 600,
 };
 
-// Alternative (ohne das Wort BATNA) je Gruppe
+// Alternative je Gruppe – ohne das Wort BATNA
 const GROUP_ALTERNATIVES = {
   1: { A: 0, B: 0 },
   2: { A: 0, B: 250 },
@@ -263,7 +263,7 @@ const NegotiationScreen = () => {
           className="glass-effect rounded-2xl p-6 mb-6"
         >
           <div className="grid grid-cols-3 gap-4 text-center">
-            {/* Deine Infos */}
+            {/* Deine Seite */}
             <div>
               <p className="text-sm text-gray-500 mb-1">Your Role</p>
               <p className="text-2xl font-bold text-blue-600">
@@ -271,18 +271,18 @@ const NegotiationScreen = () => {
               </p>
 
               {yourContribution !== null && (
-                <p className="text-xs text-gray-500 mt-2">
-                  You paid{' '}
-                  <span className="font-bold">€{yourContribution}</span> for
-                  your part of the bicycle.
+                <p className="text-sm text-gray-700 mt-2">
+                  <span className="font-semibold">You put in: </span>
+                  <span className="font-bold">€{yourContribution}</span>
                 </p>
               )}
 
-              <p className="text-xs text-gray-500 mt-3">
-                If there is <span className="font-semibold">no deal</span>,
-                <span className="font-semibold"> you get:</span>
+              <p className="text-sm text-gray-700 mt-3">
+                <span className="font-semibold">
+                  If no deal, YOU get:
+                </span>
               </p>
-              <p className="text-2xl font-extrabold text-blue-600">
+              <p className="text-3xl font-extrabold text-blue-600 mt-1">
                 €{batna}
               </p>
             </div>
@@ -301,7 +301,7 @@ const NegotiationScreen = () => {
               </div>
             </div>
 
-            {/* Gegner-Infos */}
+            {/* Gegner-Seite */}
             <div>
               <p className="text-sm text-gray-500 mb-1">Current Turn</p>
               <p className="text-2xl font-bold text-green-600">
@@ -322,18 +322,18 @@ const NegotiationScreen = () => {
               )}
 
               {opponentContribution !== null && (
-                <p className="text-xs text-gray-500 mt-3">
-                  Opponent paid{' '}
-                  <span className="font-bold">€{opponentContribution}</span> for
-                  their part.
+                <p className="text-sm text-gray-700 mt-3">
+                  <span className="font-semibold">Other player put in: </span>
+                  <span className="font-bold">€{opponentContribution}</span>
                 </p>
               )}
 
-              <p className="text-xs text-gray-500 mt-3">
-                If there is <span className="font-semibold">no deal</span>,
-                <span className="font-semibold"> opponent gets:</span>
+              <p className="text-sm text-gray-700 mt-3">
+                <span className="font-semibold">
+                  If no deal, they get:
+                </span>
               </p>
-              <p className="text-2xl font-extrabold text-red-600">
+              <p className="text-3xl font-extrabold text-red-600 mt-1">
                 €{opponentAlternative}
               </p>
             </div>
@@ -369,7 +369,7 @@ const NegotiationScreen = () => {
                   </span>
                 </div>
 
-                {/* farblich geteilte Skala + Eingabefelder */}
+                {/* Skala + Eingabe */}
                 <div className="bg-blue-50 rounded-xl p-6">
                   {/* Slider */}
                   <div className="relative w-full h-3 rounded-lg overflow-hidden bg-gray-200">
@@ -598,11 +598,11 @@ const NegotiationScreen = () => {
                   </div>
                 </div>
 
-                {/* Alternativen anzeigen */}
+                {/* Alternativen anzeigen, ganz kurz und fett */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      If no deal: <span className="font-semibold">YOU get</span>
+                      <span className="font-semibold">If no deal: YOU get</span>
                     </p>
                     <p className="text-lg font-extrabold text-blue-700">
                       €{batna}
@@ -610,8 +610,9 @@ const NegotiationScreen = () => {
                   </div>
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      If no deal:{' '}
-                      <span className="font-semibold">opponent gets</span>
+                      <span className="font-semibold">
+                        If no deal: other player gets
+                      </span>
                     </p>
                     <p className="text-lg font-extrabold text-red-600">
                       €{opponentAlternative}
