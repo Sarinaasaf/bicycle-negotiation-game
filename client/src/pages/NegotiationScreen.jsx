@@ -37,13 +37,13 @@ const responseOptions = [
   },
 ];
 
-// Historische Beiträge zum Fahrrad
+// Beiträge zum Fahrrad
 const CONTRIBUTIONS = {
   A: 200,
   B: 600,
 };
 
-// Mapping: für jede Gruppe Alternative (BATNA) von A und B
+// Alternative (ohne das Wort BATNA) je Gruppe
 const GROUP_ALTERNATIVES = {
   1: { A: 0, B: 0 },
   2: { A: 0, B: 250 },
@@ -60,8 +60,8 @@ const NegotiationScreen = () => {
     playerId,
     role, // 'A' oder 'B'
     pairId,
-    batna, // eigene Alternative (BATNA)
-    groupNumber, // Gruppennummer 1–4
+    batna, // eigene Alternative
+    groupNumber,
     currentTurn,
     setCurrentTurn,
     currentRound,
@@ -72,7 +72,7 @@ const NegotiationScreen = () => {
     setGameStatus,
   } = useGame();
 
-  // Start: wer dran ist, bekommt 1000, der andere 0
+  // Start-Angebot
   const [offerA, setOfferA] = useState(role === 'A' ? TOTAL_AMOUNT : 0);
   const [offerB, setOfferB] = useState(role === 'A' ? 0 : TOTAL_AMOUNT);
 
@@ -83,7 +83,6 @@ const NegotiationScreen = () => {
   const isMyTurn = role === currentTurn;
   const maxRounds = 10;
 
-  // historische Beiträge
   const yourContribution =
     role === 'A' || role === 'B' ? CONTRIBUTIONS[role] : null;
   const opponentContribution =
@@ -93,21 +92,20 @@ const NegotiationScreen = () => {
       ? CONTRIBUTIONS.A
       : null;
 
-  // Gegnerische Alternative aus Gruppennummer berechnen
   const opponentAlternative = (() => {
     const group = GROUP_ALTERNATIVES[groupNumber];
     if (!group || !role) return 0;
     return role === 'A' ? group.B : group.A;
   })();
 
-  // Slider-Handler: ein Wert bestimmt beide Anteile
+  // Slider
   const handleSingleSliderChange = (e) => {
     const value = Number(e.target.value);
     setOfferA(value);
     setOfferB(TOTAL_AMOUNT - value);
   };
 
-  // manuelle Eingabe A
+  // Manuelle Eingabe A
   const handleOfferAInputChange = (e) => {
     const value = Number(e.target.value);
     if (Number.isNaN(value)) return;
@@ -117,7 +115,7 @@ const NegotiationScreen = () => {
     setOfferB(TOTAL_AMOUNT - clamped);
   };
 
-  // manuelle Eingabe B
+  // Manuelle Eingabe B
   const handleOfferBInputChange = (e) => {
     const value = Number(e.target.value);
     if (Number.isNaN(value)) return;
@@ -133,7 +131,6 @@ const NegotiationScreen = () => {
       return;
     }
 
-    // Angebot vom Gegner bekommen
     socket.on('offer_received', (data) => {
       console.log('Offer received:', data);
       setPendingOffer(data);
@@ -141,20 +138,16 @@ const NegotiationScreen = () => {
       toast.info(`Person ${data.proposer} made an offer!`);
     });
 
-    // Bestätigung, dass eigenes Angebot gesendet wurde
-    socket.on('offer_sent', (data) => {
-      console.log('Offer sent:', data);
+    socket.on('offer_sent', () => {
       setIsWaitingResponse(true);
       toast.success('Offer sent! Waiting for response...');
     });
 
-    // Zug-Update
     socket.on('turn_updated', (data) => {
       console.log('Turn updated:', data);
       setCurrentTurn(data.currentTurn);
       setCurrentRound(data.currentRound);
 
-      // Historie updaten
       setRounds((prev) => [
         ...prev,
         {
@@ -175,7 +168,6 @@ const NegotiationScreen = () => {
       }
     });
 
-    // Spielende
     socket.on('game_ended', (data) => {
       console.log('Game ended:', data);
 
@@ -191,12 +183,9 @@ const NegotiationScreen = () => {
       }, 1500);
     });
 
-    // Gegner getrennt
     socket.on('opponent_disconnected', (data) => {
       toast.error(data.message);
-      setTimeout(() => {
-        navigate('/select-group');
-      }, 3000);
+      setTimeout(() => navigate('/select-group'), 3000);
     });
 
     return () => {
@@ -283,16 +272,19 @@ const NegotiationScreen = () => {
 
               {yourContribution !== null && (
                 <p className="text-xs text-gray-500 mt-2">
-                  You originally paid{' '}
-                  <span className="font-semibold">€{yourContribution}</span> for
+                  You paid{' '}
+                  <span className="font-bold">€{yourContribution}</span> for
                   your part of the bicycle.
                 </p>
               )}
 
               <p className="text-xs text-gray-500 mt-3">
-                Your alternative if no agreement (BATNA):
+                If there is <span className="font-semibold">no deal</span>,
+                <span className="font-semibold"> you get:</span>
               </p>
-              <p className="text-xl font-bold text-blue-600">€{batna}</p>
+              <p className="text-2xl font-extrabold text-blue-600">
+                €{batna}
+              </p>
             </div>
 
             {/* Rundenanzeige */}
@@ -331,18 +323,17 @@ const NegotiationScreen = () => {
 
               {opponentContribution !== null && (
                 <p className="text-xs text-gray-500 mt-3">
-                  Opponent originally paid{' '}
-                  <span className="font-semibold">
-                    €{opponentContribution}
-                  </span>{' '}
-                  for their part of the bicycle.
+                  Opponent paid{' '}
+                  <span className="font-bold">€{opponentContribution}</span> for
+                  their part.
                 </p>
               )}
 
               <p className="text-xs text-gray-500 mt-3">
-                Opponent&apos;s alternative if no agreement:
+                If there is <span className="font-semibold">no deal</span>,
+                <span className="font-semibold"> opponent gets:</span>
               </p>
-              <p className="text-xl font-bold text-red-600">
+              <p className="text-2xl font-extrabold text-red-600">
                 €{opponentAlternative}
               </p>
             </div>
@@ -361,7 +352,7 @@ const NegotiationScreen = () => {
                 {isMyTurn ? 'Make Your Offer' : 'Waiting for Opponent...'}
               </h2>
 
-              {/* Eine gemeinsame Skala */}
+              {/* Skala */}
               <div className="space-y-6 mb-8">
                 <p className="font-semibold text-gray-700">
                   How should the{' '}
@@ -369,18 +360,13 @@ const NegotiationScreen = () => {
                   Person A and Person B?
                 </p>
 
-                <p className="text-xs text-gray-500 -mt-3">
-                  Person A originally paid <span className="font-semibold">€200</span>{' '}
-                  for the wheels. Person B originally paid{' '}
-                  <span className="font-semibold">€600</span> for the frame. These
-                  amounts are only historical purchase prices – they do{' '}
-                  <span className="font-semibold">not</span> determine how the
-                  €1,000 must be divided.
-                </p>
-
-                <div className="flex justify-between text-sm font-semibold mb-1 mt-2">
-                  <span className="text-blue-600">Person A</span>
-                  <span className="text-purple-600">Person B</span>
+                <div className="flex justify-between text-sm font-semibold mb-1">
+                  <span className="text-blue-600">
+                    Person A (wheels €200)
+                  </span>
+                  <span className="text-purple-600">
+                    Person B (frame €600)
+                  </span>
                 </div>
 
                 {/* farblich geteilte Skala + Eingabefelder */}
@@ -616,17 +602,18 @@ const NegotiationScreen = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      Your alternative if no agreement
+                      If no deal: <span className="font-semibold">YOU get</span>
                     </p>
-                    <p className="text-lg font-bold text-blue-700">
+                    <p className="text-lg font-extrabold text-blue-700">
                       €{batna}
                     </p>
                   </div>
                   <div className="bg-white/70 rounded-xl p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">
-                      Opponent&apos;s alternative if no agreement
+                      If no deal:{' '}
+                      <span className="font-semibold">opponent gets</span>
                     </p>
-                    <p className="text-lg font-bold text-red-600">
+                    <p className="text-lg font-extrabold text-red-600">
                       €{opponentAlternative}
                     </p>
                   </div>
