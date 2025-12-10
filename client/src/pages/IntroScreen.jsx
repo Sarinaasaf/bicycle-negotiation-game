@@ -96,8 +96,8 @@ const IntroScreen = () => {
             {/* ✨ ONLY TEXT — NO YELLOW BOX ANYMORE */}
             <p className="text-center text-sm text-gray-700 mt-4">
               In the experiment, each participant also receives an alternative
-              selling option (their BATNA). If the negotiation fails, this
-              alternative option is automatically activated.
+              selling option. If the negotiation fails, this alternative option
+              is automatically activated.
             </p>
           </div>
         </motion.div>
