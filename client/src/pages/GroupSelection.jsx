@@ -1,3 +1,5 @@
+import React from 'react';
+
 const groups = [
   {
     id: 1,
@@ -49,3 +51,20 @@ const groups = [
     color: 'from-yellow-500 to-yellow-400',
   },
 ];
+
+export default function GroupSelection() {
+  return (
+    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      {groups.map((group) => (
+        <div
+          key={group.id}
+          className={`p-4 rounded-lg text-white ${group.bgColor}`}
+        >
+          <h2 className="text-lg font-bold">Gruppe {group.id}</h2>
+          <p>BATNA A: {group.batnaA} €</p>
+          <p>BATNA B: {group.batnaB} €</p>
+        </div>
+      ))}
+    </div>
+  );
+}
