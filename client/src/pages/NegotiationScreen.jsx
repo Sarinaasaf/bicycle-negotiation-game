@@ -49,6 +49,9 @@ const GROUP_ALTERNATIVES = {
   2: { A: 0, B: 250 },
   3: { A: 0, B: 500 },
   4: { A: 0, B: 750 },
+  5: { A: 250, B: 0 },
+  6: { A: 500, B: 0 },
+  7: { A: 750, B: 0 },
 };
 
 const TOTAL_AMOUNT = 1000;
