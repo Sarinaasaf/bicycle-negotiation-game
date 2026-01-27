@@ -1,37 +1,21 @@
 import mongoose from 'mongoose';
 
-const playerSchema = new mongoose.Schema({
-  playerId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  role: {
-    type: String,
-    enum: ['A', 'B'],
-    default: null
-  },
-  groupNumber: {
-    type: Number,
-    enum: [1, 2, 3, 4],
-    required: true
-  },
-  pairId: {
-    type: String,
-    default: null
-  },
-  socketId: {
-    type: String,
-    required: true
-  },
-  isWaiting: {
-    type: Boolean,
-    default: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+const PlayerSchema = new mongoose.Schema(
+  {
+    playerId: { type: String, required: true, unique: true, index: true },
 
-export default mongoose.model('Player', playerSchema);
+    socketId: { type: String, default: null },
+
+    // ✅ WICHTIG für Gruppen-Pairing
+    groupNumber: { type: Number, default: null, index: true },
+    isWaiting: { type: Boolean, default: false, index: true },
+
+    // game state
+    pairId: { type: String, default: null, index: true },
+    role: { type: String, enum: ['A', 'B', null], default: null },
+    batna: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model('Player', PlayerSchema);
