@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../context/GameContext';
@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 const WaitingRoom = () => {
   const navigate = useNavigate();
+
   const {
     socket,
     playerId,
@@ -18,6 +19,9 @@ const WaitingRoom = () => {
     setGameStatus
   } = useGame();
 
+  // ✅ verhindert mehrfaches join_game (React re-render / StrictMode)
+  const didJoinRef = useRef(false);
+
   useEffect(() => {
     if (!socket) {
       navigate('/select-group');
@@ -29,18 +33,23 @@ const WaitingRoom = () => {
       return;
     }
 
-    // socket.id kann beim allerersten Render kurz fehlen
-    if (!socket.id && !playerId) return;
-
+    // warten bis socket.id existiert
     const effectivePlayerId = playerId || socket.id;
+    if (!effectivePlayerId) return;
 
-    // playerId im Context speichern, damit es angezeigt wird und stabil bleibt
-    if (!playerId) setPlayerId(effectivePlayerId);
+    // ✅ join_game nur EINMAL senden
+    if (!didJoinRef.current) {
+      didJoinRef.current = true;
 
-    // Join request an den Server (WICHTIG: groupNumber mitsenden)
-    socket.emit('join_game', { playerId: effectivePlayerId, groupNumber });
+      if (!playerId) setPlayerId(effectivePlayerId);
+
+      console.log('➡️ emitting join_game', { playerId: effectivePlayerId, groupNumber });
+      socket.emit('join_game', { playerId: effectivePlayerId, groupNumber });
+    }
 
     const onPairFound = (data) => {
+      console.log('✅ pair_found', data);
+
       setRole(data.role);
       setPairId(data.pairId);
       setBatna(data.batna);
@@ -49,38 +58,34 @@ const WaitingRoom = () => {
 
       toast.success(`Paired successfully! You are Person ${data.role}`);
 
-      setTimeout(() => navigate('/negotiate'), 800);
+      // schnell weiter
+      setTimeout(() => navigate('/negotiate'), 500);
     };
 
     const onWaiting = (data) => {
-      console.log('Waiting for pair:', data?.message);
-    };
-
-    const onReconnected = () => {
-      navigate('/negotiate');
+      console.log('⏳ waiting_for_pair', data?.message);
     };
 
     const onError = (data) => {
-      toast.error(data?.message || 'An error occurred');
+      console.error('❌ socket error', data);
+      toast.error(data?.message || 'Server error');
     };
 
     socket.on('pair_found', onPairFound);
     socket.on('waiting_for_pair', onWaiting);
-    socket.on('reconnected', onReconnected);
     socket.on('error', onError);
 
     return () => {
       socket.off('pair_found', onPairFound);
       socket.off('waiting_for_pair', onWaiting);
-      socket.off('reconnected', onReconnected);
       socket.off('error', onError);
     };
   }, [
     socket,
-    playerId,
-    setPlayerId,
     groupNumber,
     navigate,
+    playerId,
+    setPlayerId,
     setRole,
     setPairId,
     setBatna,
