@@ -9,12 +9,13 @@ const WaitingRoom = () => {
   const {
     socket,
     playerId,
+    setPlayerId,
     groupNumber,
     setRole,
     setPairId,
     setBatna,
     setCurrentTurn,
-    setGameStatus,
+    setGameStatus
   } = useGame();
 
   useEffect(() => {
@@ -28,20 +29,18 @@ const WaitingRoom = () => {
       return;
     }
 
-    // ✅ socket.id ist evtl. beim ersten Render noch undefined
-    if (!socket.id && !playerId) {
-      return; // warten bis socket.id da ist
-    }
+    // socket.id kann beim allerersten Render kurz fehlen
+    if (!socket.id && !playerId) return;
 
-    // ✅ nutze socket.id als "playerId", falls keine vorhanden ist
     const effectivePlayerId = playerId || socket.id;
 
-    // ✅ join_game mit groupNumber (wichtig)
+    // playerId im Context speichern, damit es angezeigt wird und stabil bleibt
+    if (!playerId) setPlayerId(effectivePlayerId);
+
+    // Join request an den Server (WICHTIG: groupNumber mitsenden)
     socket.emit('join_game', { playerId: effectivePlayerId, groupNumber });
 
     const onPairFound = (data) => {
-      console.log('Pair found:', data);
-
       setRole(data.role);
       setPairId(data.pairId);
       setBatna(data.batna);
@@ -50,45 +49,43 @@ const WaitingRoom = () => {
 
       toast.success(`Paired successfully! You are Person ${data.role}`);
 
-      setTimeout(() => {
-        navigate('/negotiate');
-      }, 800);
+      setTimeout(() => navigate('/negotiate'), 800);
     };
 
     const onWaiting = (data) => {
       console.log('Waiting for pair:', data?.message);
     };
 
-    const onReconnected = (data) => {
-      console.log('Reconnected to active game:', data);
+    const onReconnected = () => {
       navigate('/negotiate');
     };
 
-    const onConnectError = (err) => {
-      console.error('connect_error:', err?.message || err);
+    const onError = (data) => {
+      toast.error(data?.message || 'An error occurred');
     };
 
     socket.on('pair_found', onPairFound);
     socket.on('waiting_for_pair', onWaiting);
     socket.on('reconnected', onReconnected);
-    socket.on('connect_error', onConnectError);
+    socket.on('error', onError);
 
     return () => {
       socket.off('pair_found', onPairFound);
       socket.off('waiting_for_pair', onWaiting);
       socket.off('reconnected', onReconnected);
-      socket.off('connect_error', onConnectError);
+      socket.off('error', onError);
     };
   }, [
     socket,
     playerId,
+    setPlayerId,
     groupNumber,
     navigate,
     setRole,
     setPairId,
     setBatna,
     setCurrentTurn,
-    setGameStatus,
+    setGameStatus
   ]);
 
   return (
@@ -101,15 +98,8 @@ const WaitingRoom = () => {
       >
         <div className="glass-effect rounded-3xl p-12">
           <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 5, -5, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             className="text-8xl mb-8"
           >
             🔄
@@ -118,21 +108,6 @@ const WaitingRoom = () => {
           <h1 className="text-4xl font-bold gradient-text mb-4">
             Finding Your Partner
           </h1>
-
-          <div className="flex justify-center items-center gap-2 mb-8">
-            {[0, 1, 2].map((index) => (
-              <motion.div
-                key={index}
-                animate={{ y: [0, -20, 0] }}
-                transition={{
-                  duration: 0.6,
-                  repeat: Infinity,
-                  delay: index * 0.2,
-                }}
-                className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
-              />
-            ))}
-          </div>
 
           <p className="text-xl text-gray-600 mb-6">
             Please wait while we find another player in your group...
@@ -148,34 +123,15 @@ const WaitingRoom = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Group</p>
-                <p className="font-bold text-gray-800">
-                  Group {groupNumber || '—'}
-                </p>
+                <p className="font-bold text-gray-800">Group {groupNumber}</p>
               </div>
             </div>
           </div>
-        </div>
 
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: '100%' }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mt-8"
-        />
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="mt-8"
-        >
-          <button
-            onClick={() => navigate('/select-group')}
-            className="button-secondary"
-          >
+          <button onClick={() => navigate('/select-group')} className="button-secondary">
             Cancel & Go Back
           </button>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );

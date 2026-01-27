@@ -4,48 +4,26 @@ import { useGame } from '../context/GameContext';
 import { toast } from 'react-toastify';
 
 const groups = [
-  { id: 1, batnaA: 0,   batnaB: 0,   bgColor: 'bg-blue-500',   softBtn: 'bg-blue-200' },
-  { id: 2, batnaA: 0,   batnaB: 250, bgColor: 'bg-green-500',  softBtn: 'bg-green-200' },
-  { id: 3, batnaA: 0,   batnaB: 500, bgColor: 'bg-orange-500', softBtn: 'bg-orange-200' },
-  { id: 4, batnaA: 0,   batnaB: 750, bgColor: 'bg-red-500',    softBtn: 'bg-red-200' },
-  { id: 5, batnaA: 250, batnaB: 0,   bgColor: 'bg-indigo-500', softBtn: 'bg-indigo-200' },
-  { id: 6, batnaA: 500, batnaB: 0,   bgColor: 'bg-pink-500',   softBtn: 'bg-pink-200' },
-  { id: 7, batnaA: 750, batnaB: 0,   bgColor: 'bg-yellow-500', softBtn: 'bg-yellow-200' },
+  { id: 1, bgColor: 'bg-blue-500',   softBtn: 'bg-blue-200' },
+  { id: 2, bgColor: 'bg-green-500',  softBtn: 'bg-green-200' },
+  { id: 3, bgColor: 'bg-orange-500', softBtn: 'bg-orange-200' },
+  { id: 4, bgColor: 'bg-red-500',    softBtn: 'bg-red-200' },
+  { id: 5, bgColor: 'bg-indigo-500', softBtn: 'bg-indigo-200' },
+  { id: 6, bgColor: 'bg-pink-500',   softBtn: 'bg-pink-200' },
+  { id: 7, bgColor: 'bg-yellow-500', softBtn: 'bg-yellow-200' },
 ];
 
 export default function GroupSelection() {
   const navigate = useNavigate();
+  const { socket, setGroupNumber } = useGame();
 
-  // ✅ Dein Context hat KEIN setGroup, sondern setGroupNumber / setBatna
-  const { socket, setGroupNumber, setBatna, setGameStatus } = useGame();
-
-  const handleJoin = (group) => {
-    if (!socket) {
-      toast.error('No connection to server.');
+  const handleJoin = (g) => {
+    if (!socket || !socket.connected) {
+      toast.error('No connection to server yet. Please wait a moment.');
       return;
     }
 
-    // ✅ alte Session-Daten löschen, damit nichts "hängen bleibt" (z.B. immer Gruppe 3)
-    localStorage.removeItem('pairId');
-    localStorage.removeItem('role');
-    localStorage.removeItem('playerId');
-
-    // ✅ Gruppe im Context + LocalStorage setzen (Context synced eh, aber doppelt ist sicher)
-    setGroupNumber(group.id);
-
-    // ✅ batna NICHT anzeigen – nur intern setzen (dein Server überschreibt später nach Pairing)
-    // Für Gruppen 1–4 war batnaB relevant; für 5–7 wäre es batnaA. Wir speichern beides robust:
-    // -> wir setzen erstmal 0, damit nichts vorab "sichtbar" / fest ist.
-    // Wenn du unbedingt etwas setzen willst, nimm: setBatna(Math.max(group.batnaA, group.batnaB));
-    setBatna(0);
-
-    // ✅ Status auf waiting setzen (falls du das irgendwo nutzt)
-    if (typeof setGameStatus === 'function') setGameStatus('waiting');
-
-    // ✅ Server join (Event bleibt wie bei dir)
-    socket.emit('joinGroup', { groupId: group.id });
-
-    // ✅ weiter wie vorher
+    setGroupNumber(g.id);
     navigate('/waiting');
   };
 
