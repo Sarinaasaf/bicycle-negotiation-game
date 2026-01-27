@@ -15,30 +15,37 @@ const groups = [
 
 export default function GroupSelection() {
   const navigate = useNavigate();
-  const { socket, setGroup } = useGame(); // setGroup muss es im Context geben
+
+  // ✅ Dein Context hat KEIN setGroup, sondern setGroupNumber / setBatna
+  const { socket, setGroupNumber, setBatna, setGameStatus } = useGame();
 
   const handleJoin = (group) => {
-    // 1) lokal speichern (ohne es anzuzeigen)
-    //    (wir speichern auch BATNAs, damit server/next screens sie später nutzen können)
-    if (typeof setGroup === 'function') {
-      setGroup({
-        groupId: group.id,
-        batnaA: group.batnaA,
-        batnaB: group.batnaB,
-      });
-    }
-
-    // 2) Server informieren (nur wenn socket da ist)
     if (!socket) {
       toast.error('No connection to server.');
       return;
     }
 
-    // ⚠️ Event-Name muss zu deinem Backend passen.
-    // Häufige Namen: 'joinGroup', 'join_group', 'joinRoom'
+    // ✅ alte Session-Daten löschen, damit nichts "hängen bleibt" (z.B. immer Gruppe 3)
+    localStorage.removeItem('pairId');
+    localStorage.removeItem('role');
+    localStorage.removeItem('playerId');
+
+    // ✅ Gruppe im Context + LocalStorage setzen (Context synced eh, aber doppelt ist sicher)
+    setGroupNumber(group.id);
+
+    // ✅ batna NICHT anzeigen – nur intern setzen (dein Server überschreibt später nach Pairing)
+    // Für Gruppen 1–4 war batnaB relevant; für 5–7 wäre es batnaA. Wir speichern beides robust:
+    // -> wir setzen erstmal 0, damit nichts vorab "sichtbar" / fest ist.
+    // Wenn du unbedingt etwas setzen willst, nimm: setBatna(Math.max(group.batnaA, group.batnaB));
+    setBatna(0);
+
+    // ✅ Status auf waiting setzen (falls du das irgendwo nutzt)
+    if (typeof setGameStatus === 'function') setGameStatus('waiting');
+
+    // ✅ Server join (Event bleibt wie bei dir)
     socket.emit('joinGroup', { groupId: group.id });
 
-    // 3) Weiterleitung wie früher
+    // ✅ weiter wie vorher
     navigate('/waiting');
   };
 
