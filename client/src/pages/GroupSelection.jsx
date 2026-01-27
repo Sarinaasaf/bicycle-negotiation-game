@@ -15,7 +15,11 @@ const groups = [
 
 export default function GroupSelection() {
   const navigate = useNavigate();
-  const { socket, setGroupNumber } = useGame();
+
+  // ✅ WICHTIG: playerId setzen, sonst pairt der Server nicht sauber (dein Server nutzt playerId als key)
+  const { socket, setGroupNumber, setPlayerId } = useGame();
+
+  const isReady = !!socket && socket.connected;
 
   const handleJoin = (g) => {
     if (!socket || !socket.connected) {
@@ -23,7 +27,13 @@ export default function GroupSelection() {
       return;
     }
 
+    // ✅ Group speichern
     setGroupNumber(g.id);
+
+    // ✅ playerId speichern (wir nehmen socket.id, weil dein socketHandlers join_game playerId erwartet)
+    setPlayerId(socket.id);
+
+    // ✅ weiter wie früher
     navigate('/waiting');
   };
 
@@ -40,13 +50,19 @@ export default function GroupSelection() {
           <p className="text-xl text-gray-600">
             Choose one of the groups to begin the negotiation
           </p>
+
+          {!isReady && (
+            <p className="mt-4 text-orange-600 font-semibold">
+              Connecting to server… (first load can take ~30 seconds)
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {groups.map((g) => (
             <motion.div
               key={g.id}
-              whileHover={{ scale: 1.01 }}
+              whileHover={{ scale: isReady ? 1.01 : 1 }}
               className={`${g.bgColor} rounded-3xl p-10 text-white shadow-lg`}
             >
               <div className="flex justify-center mb-6">
@@ -61,7 +77,10 @@ export default function GroupSelection() {
 
               <button
                 onClick={() => handleJoin(g)}
-                className={`w-full ${g.softBtn} text-gray-900 font-extrabold text-2xl py-6 rounded-2xl shadow-sm`}
+                disabled={!isReady}
+                className={`w-full ${g.softBtn} text-gray-900 font-extrabold text-2xl py-6 rounded-2xl shadow-sm ${
+                  !isReady ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 Click to Join
               </button>

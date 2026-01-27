@@ -1,5 +1,4 @@
 // server/socket/socketHandlers.js
-
 import Player from '../models/Player.js';
 import Game from '../models/Game.js';
 import { findPair } from '../controllers/gameController.js';
@@ -11,45 +10,44 @@ export const setupSocketHandlers = (io) => {
   io.on('connection', (socket) => {
     console.log(`✅ Client connected: ${socket.id}`);
 
-    // ✅ Player joins and requests pairing (NOW uses groupNumber)
+    // ✅ JOIN GAME (MUSS player in DB updaten/erstellen)
     socket.on('join_game', async (data) => {
       try {
         const { playerId, groupNumber } = data || {};
 
         if (!playerId || !groupNumber) {
-          socket.emit('error', { message: 'playerId and groupNumber required' });
+          socket.emit('error', { message: 'join_game requires playerId and groupNumber' });
           return;
         }
 
-        // save active connection
+        // map player -> socket
         activeConnections.set(playerId, socket.id);
 
-        // ✅ ensure player exists + has socketId + groupNumber + waiting
-        // (this makes it robust even if Player wasn't created via REST)
+        // ✅ upsert player in DB (WICHTIG für findPair)
         await Player.findOneAndUpdate(
           { playerId },
           {
-            $set: {
-              playerId,
-              socketId: socket.id,
-              groupNumber: Number(groupNumber),
-              isWaiting: true,
-            },
+            playerId,
+            groupNumber: Number(groupNumber),
+            socketId: socket.id,
+            isWaiting: true,
+            pairId: null,
+            role: null,
           },
           { upsert: true, new: true }
         );
 
-        // ✅ Try to find a pair in SAME group
-        const pairResult = await findPair(playerId, Number(groupNumber));
+        // ✅ try pairing
+        const pairResult = await findPair(playerId);
 
         if (pairResult) {
           const { pairId, players, game } = pairResult;
 
           // Notify both players
           Object.values(players).forEach((p) => {
-            const playerSocketId = activeConnections.get(p.playerId);
-            if (playerSocketId) {
-              io.to(playerSocketId).emit('pair_found', {
+            const sid = activeConnections.get(p.playerId);
+            if (sid) {
+              io.to(sid).emit('pair_found', {
                 pairId,
                 playerId: p.playerId,
                 role: p.role,
@@ -61,22 +59,17 @@ export const setupSocketHandlers = (io) => {
             }
           });
 
-          console.log(`🎯 Pair created: ${pairId} (group ${game.groupNumber})`);
+          console.log(`🎯 Pair created: ${pairId} (Group ${game.groupNumber})`);
         } else {
-          // No pair found, player is waiting
-          socket.emit('waiting_for_pair', {
-            message: 'Waiting for another player...',
-          });
+          socket.emit('waiting_for_pair', { message: 'Waiting for another player...' });
         }
       } catch (error) {
-        console.error('❌ Error in join_game:', error);
+        console.error('Error in join_game:', error);
         socket.emit('error', { message: 'Failed to join game' });
       }
     });
 
-    // ----------------------------
-    // submit_offer (unchanged)
-    // ----------------------------
+    // Player submits an offer
     socket.on('submit_offer', async (data) => {
       try {
         const { pairId, playerId, offerA, offerB } = data;
@@ -101,7 +94,6 @@ export const setupSocketHandlers = (io) => {
 
         const opponentId =
           player.role === 'A' ? game.playerB.playerId : game.playerA.playerId;
-
         const opponentSocketId = activeConnections.get(opponentId);
 
         if (opponentSocketId) {
@@ -113,20 +105,14 @@ export const setupSocketHandlers = (io) => {
           });
         }
 
-        socket.emit('offer_sent', {
-          offerA,
-          offerB,
-          waitingForResponse: true,
-        });
+        socket.emit('offer_sent', { offerA, offerB, waitingForResponse: true });
       } catch (error) {
-        console.error('❌ Error in submit_offer:', error);
+        console.error('Error in submit_offer:', error);
         socket.emit('error', { message: 'Failed to submit offer' });
       }
     });
 
-    // ----------------------------
-    // submit_response (unchanged)
-    // ----------------------------
+    // Player submits response
     socket.on('submit_response', async (data) => {
       try {
         const { pairId, playerId, response, offerA, offerB } = data;
@@ -224,14 +210,12 @@ export const setupSocketHandlers = (io) => {
           if (playerBSocketId) io.to(playerBSocketId).emit('turn_updated', updateData);
         }
       } catch (error) {
-        console.error('❌ Error in submit_response:', error);
+        console.error('Error in submit_response:', error);
         socket.emit('error', { message: 'Failed to submit response' });
       }
     });
 
-    // ----------------------------
-    // reconnect_player (unchanged)
-    // ----------------------------
+    // Handle reconnection
     socket.on('reconnect_player', async (data) => {
       try {
         const { playerId } = data;
@@ -240,6 +224,7 @@ export const setupSocketHandlers = (io) => {
         if (player) {
           player.socketId = socket.id;
           await player.save();
+
           activeConnections.set(playerId, socket.id);
 
           if (player.pairId) {
@@ -259,28 +244,42 @@ export const setupSocketHandlers = (io) => {
           }
         }
       } catch (error) {
-        console.error('❌ Error in reconnect_player:', error);
+        console.error('Error in reconnect_player:', error);
       }
     });
 
-    // ----------------------------
-    // disconnect cleanup (important)
-    // ----------------------------
+    // Handle disconnection
     socket.on('disconnect', async () => {
       console.log(`❌ Client disconnected: ${socket.id}`);
 
-      for (const [playerId, socketId] of activeConnections.entries()) {
-        if (socketId === socket.id) {
-          activeConnections.delete(playerId);
+      for (const [pid, sid] of activeConnections.entries()) {
+        if (sid === socket.id) {
+          activeConnections.delete(pid);
 
           try {
-            // mark player as not waiting & remove socketId
-            await Player.findOneAndUpdate(
-              { playerId },
-              { $set: { socketId: null, isWaiting: false } }
-            );
-          } catch (e) {
-            console.error('Disconnect cleanup error:', e);
+            const player = await Player.findOne({ playerId: pid });
+            if (player) {
+              if (player.pairId) {
+                const game = await Game.findOne({ pairId: player.pairId });
+                if (game && game.status === 'active') {
+                  const opponentId =
+                    player.role === 'A'
+                      ? game.playerB.playerId
+                      : game.playerA.playerId;
+                  const opponentSocketId = activeConnections.get(opponentId);
+                  if (opponentSocketId) {
+                    io.to(opponentSocketId).emit('opponent_disconnected', {
+                      message: 'Your opponent has disconnected',
+                    });
+                  }
+                }
+              } else if (player.isWaiting) {
+                await Player.deleteOne({ playerId: pid });
+                console.log(`🗑️ Removed waiting player: ${pid}`);
+              }
+            }
+          } catch (error) {
+            console.error('Error handling disconnect:', error);
           }
 
           break;
