@@ -1,21 +1,21 @@
+// server/models/Player.js
 import mongoose from 'mongoose';
 
-const PlayerSchema = new mongoose.Schema(
+const playerSchema = new mongoose.Schema(
   {
-    playerId: { type: String, required: true, unique: true, index: true },
+    playerId: { type: String, required: true, unique: true },
 
-    socketId: { type: String, default: null },
+    // ✅ wichtig fürs Pairing
+    groupNumber: { type: Number, required: true, index: true },
+    isWaiting: { type: Boolean, default: true, index: true },
+    socketId: { type: String, default: null, index: true },
 
-    // ✅ WICHTIG für Gruppen-Pairing
-    groupNumber: { type: Number, default: null, index: true },
-    isWaiting: { type: Boolean, default: false, index: true },
-
-    // game state
+    // optional / später genutzt
+    role: { type: String, enum: ['A', 'B'], default: null },
     pairId: { type: String, default: null, index: true },
-    role: { type: String, enum: ['A', 'B', null], default: null },
     batna: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Player', PlayerSchema);
+export default mongoose.model('Player', playerSchema);
