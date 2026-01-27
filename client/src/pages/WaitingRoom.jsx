@@ -14,18 +14,45 @@ const WaitingRoom = () => {
     setPairId,
     setBatna,
     setCurrentTurn,
-    setGameStatus
+    setGameStatus,
+    setPlayerId, // ✅ wir erzeugen eine playerId, falls noch keine da ist
   } = useGame();
 
   useEffect(() => {
-    if (!socket || !playerId) {
+    if (!socket) {
       navigate('/select-group');
       return;
     }
 
-    socket.emit('join_game', { playerId });
+    // ✅ Gruppe muss gesetzt sein, sonst zurück
+    if (!groupNumber) {
+      navigate('/select-group');
+      return;
+    }
 
-    socket.on('pair_found', (data) => {
+    // ✅ Wenn keine playerId vorhanden ist: jetzt eine vom Server holen
+    // (sonst bleibt dein Code immer im Redirect / oder join_game läuft falsch)
+    if (!playerId) {
+      socket.emit('register_player', { groupNumber }, (ack) => {
+        const newPlayerId = ack?.playerId || ack?.id || ack;
+        if (!newPlayerId) {
+          toast.error('Could not register player. Please try again.');
+          navigate('/select-group');
+          return;
+        }
+
+        setPlayerId?.(newPlayerId);
+
+        // erst danach dem Spiel beitreten
+        socket.emit('join_game', { playerId: newPlayerId, groupNumber });
+      });
+      return;
+    }
+
+    // ✅ normaler Flow: join_game mit groupNumber (wichtig für Gruppen 5–7)
+    socket.emit('join_game', { playerId, groupNumber });
+
+    const onPairFound = (data) => {
       console.log('Pair found:', data);
 
       setRole(data.role);
@@ -39,23 +66,44 @@ const WaitingRoom = () => {
       setTimeout(() => {
         navigate('/negotiate');
       }, 1500);
-    });
+    };
 
-    socket.on('waiting_for_pair', (data) => {
-      console.log('Waiting for pair:', data.message);
-    });
+    const onWaiting = (data) => {
+      console.log('Waiting for pair:', data?.message);
+    };
 
-    socket.on('reconnected', (data) => {
+    const onReconnected = (data) => {
       console.log('Reconnected to active game:', data);
       navigate('/negotiate');
-    });
+    };
+
+    const onError = (data) => {
+      toast.error(data?.message || 'An error occurred');
+    };
+
+    socket.on('pair_found', onPairFound);
+    socket.on('waiting_for_pair', onWaiting);
+    socket.on('reconnected', onReconnected);
+    socket.on('error', onError);
 
     return () => {
-      socket.off('pair_found');
-      socket.off('waiting_for_pair');
-      socket.off('reconnected');
+      socket.off('pair_found', onPairFound);
+      socket.off('waiting_for_pair', onWaiting);
+      socket.off('reconnected', onReconnected);
+      socket.off('error', onError);
     };
-  }, [socket, playerId, navigate]);
+  }, [
+    socket,
+    playerId,
+    groupNumber,
+    navigate,
+    setRole,
+    setPairId,
+    setBatna,
+    setCurrentTurn,
+    setGameStatus,
+    setPlayerId,
+  ]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -110,11 +158,15 @@ const WaitingRoom = () => {
             <div className="grid grid-cols-2 gap-4 text-left">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Player ID</p>
-                <p className="font-mono font-bold text-gray-800">{playerId}</p>
+                <p className="font-mono font-bold text-gray-800">
+                  {playerId || '—'}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Group</p>
-                <p className="font-bold text-gray-800">Group {groupNumber}</p>
+                <p className="font-bold text-gray-800">
+                  Group {groupNumber || '—'}
+                </p>
               </div>
             </div>
           </div>
@@ -146,3 +198,4 @@ const WaitingRoom = () => {
 };
 
 export default WaitingRoom;
+
