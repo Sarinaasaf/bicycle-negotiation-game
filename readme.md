@@ -1,63 +1,68 @@
-# 🚲 Bicycle Negotiation Game
+✨ Key Features
 
-A real-time two-player negotiation simulation game built with React, Node.js, Socket.io, and MongoDB.
+🎮 Real-time multiplayer using Socket.io
+🎨 Modern and visually appealing UI with Tailwind CSS and Framer Motion
+🎯 4 game groups with different BATNA values
+⚡ Automatic player matching
+📊 Real-time tracking of negotiation history
+💾 Data export to Excel files
+🔄 Up to 10 negotiation rounds
+📱 Responsive design for all devices
 
-## 📋 Tổng quan dự án
+🛠️ Tech Stack
+Frontend
 
-Trò chơi mô phỏng tình huống đàm phán giữa hai người (A và B) về việc chia €1,000 từ việc bán một chiếc xe đạp hoàn chỉnh. Mỗi người sở hữu một phần của xe đạp và phải đàm phán để đạt được thỏa thuận.
+React 18
 
-## ✨ Tính năng chính
+Vite
 
-- 🎮 **Real-time multiplayer** với Socket.io
-- 🎨 **Giao diện đẹp mắt** với Tailwind CSS và Framer Motion
-- 🎯 **4 nhóm chơi** với giá trị BATNA khác nhau
-- ⚡ **Tự động ghép cặp** người chơi
-- 📊 **Theo dõi lịch sử đàm phán** theo thời gian thực
-- 💾 **Export dữ liệu** ra file Excel
-- 🔄 **Tối đa 10 vòng đàm phán**
-- 📱 **Responsive design** cho mọi thiết bị
+React Router DOM
 
-## 🛠️ Tech Stack
+Socket.io Client
 
-### Frontend
-- React 18
-- Vite
-- React Router DOM
-- Socket.io Client
-- Tailwind CSS
-- Framer Motion
-- Axios
-- React Toastify
+Tailwind CSS
 
-### Backend
-- Node.js
-- Express
-- Socket.io
-- MongoDB với Mongoose
-- ExcelJS
-- Nanoid
+Framer Motion
 
-## 📦 Cài đặt
+Axios
 
-### Yêu cầu hệ thống
-- Node.js (v16 trở lên)
-- MongoDB (local hoặc MongoDB Atlas)
-- npm hoặc yarn
+React Toastify
 
-### Bước 1: Clone repository
-```bash
+Backend
+
+Node.js
+
+Express
+
+Socket.io
+
+MongoDB with Mongoose
+
+ExcelJS
+
+Nanoid
+
+📦 Installation
+System Requirements
+
+Node.js (v16 or higher)
+
+MongoDB (local or MongoDB Atlas)
+
+npm or yarn
+
+Step 1: Clone Repository
 cd d:\An\Game
-```
 
-### Bước 2: Cài đặt dependencies
+Step 2: Install Dependencies
 
-**Cài tất cả (root + server + client):**
-```bash
+Install everything (root + server + client):
+
 npm run install-all
-```
 
-**Hoặc cài từng phần:**
-```bash
+
+Or install each part separately:
+
 # Root
 npm install
 
@@ -68,34 +73,35 @@ npm install
 # Client
 cd client
 npm install
-```
 
-### Bước 3: Cấu hình MongoDB
+Step 3: MongoDB Configuration
+Using Local MongoDB
 
-1. **Nếu dùng MongoDB local:**
-   - Đảm bảo MongoDB đang chạy trên `localhost:27017`
-   - File `server/.env` đã được tạo sẵn với cấu hình mặc định
+Ensure MongoDB is running on localhost:27017
 
-2. **Nếu dùng MongoDB Atlas:**
-   - Tạo cluster trên MongoDB Atlas
-   - Lấy connection string
-   - Sửa file `server/.env`:
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/bicycle-game?retryWrites=true&w=majority
-   NODE_ENV=development
-   ```
+The file server/.env is already created with default configuration
 
-### Bước 4: Chạy ứng dụng
+Using MongoDB Atlas
 
-**Chạy đồng thời server và client:**
-```bash
+Create a cluster on MongoDB Atlas
+
+Obtain the connection string
+
+Update server/.env:
+
+PORT=5000
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/bicycle-game?retryWrites=true&w=majority
+NODE_ENV=development
+
+Step 4: Run the Application
+
+Run server and client simultaneously:
+
 npm run dev
-```
 
-**Hoặc chạy riêng:**
 
-```bash
+Or run them separately:
+
 # Terminal 1 - Server
 cd server
 npm run dev
@@ -103,70 +109,84 @@ npm run dev
 # Terminal 2 - Client
 cd client
 npm run dev
-```
 
-### Bước 5: Truy cập ứng dụng
+Step 5: Access the Application
 
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:5000
-- **Health Check:** http://localhost:5000/api/health
+Frontend: http://localhost:3000
 
-## 🎮 Hướng dẫn chơi
+Backend API: http://localhost:5000
 
-1. **Màn hình giới thiệu**
-   - Đọc thông tin về trò chơi
-   - Nhấn "Start the Game"
+Health Check: http://localhost:5000/api/health
 
-2. **Chọn nhóm (1-4)**
-   - Mỗi nhóm có giá trị BATNA khác nhau cho Person B
-   - Chọn một nhóm để tham gia
+🎮 Gameplay Guide
+Introduction Screen
 
-3. **Phòng chờ**
-   - Hệ thống tự động tìm đối thủ trong cùng nhóm
-   - Được phân vai ngẫu nhiên (Person A hoặc B)
+Read information about the game
 
-4. **Đàm phán**
-   - Người chơi lần lượt đưa ra đề nghị chia €1,000
-   - Đối phương chọn 1 trong 4 phản hồi:
-     - **Too Low:** Từ chối, tiếp tục đàm phán
-     - **Accept:** Chấp nhận, kết thúc game (thành công)
-     - **Better Offer:** Có lựa chọn tốt hơn, tiếp tục đàm phán
-     - **Not Accept:** Không chấp nhận, kết thúc game (thất bại)
-   - Tối đa 10 vòng
+Click "Start the Game"
 
-5. **Kết quả**
-   - Xem kết quả cuối cùng
-   - So sánh với BATNA
-   - Export dữ liệu ra Excel
-   - Chơi lại hoặc về trang chủ
+Group Selection (1–4)
 
-## 📊 Cơ chế BATNA (4 nhóm)
+Each group has a different BATNA value for Person B
 
-| Nhóm | Person A BATNA | Person B BATNA |
-|------|----------------|----------------|
-| 1    | €0             | €0             |
-| 2    | €0             | €300           |
-| 3    | €0             | €500           |
-| 4    | €0             | €600           |
+Select one group to join
 
-- Nếu đàm phán **thành công**: Chia tiền theo thỏa thuận
-- Nếu đàm phán **thất bại**: Person A nhận €0, Person B nhận BATNA
+Waiting Room
 
-## 🗂️ Cấu trúc thư mục
+The system automatically finds an opponent within the same group
 
-```
+Roles are randomly assigned (Person A or Person B)
+
+Negotiation
+
+Players take turns making offers to divide €1,000
+
+The opponent chooses one of four responses:
+
+Too Low: Reject and continue negotiating
+
+Accept: Accept the offer and end the game (successful)
+
+Better Offer: Has a better option, continue negotiating
+
+Not Accept: Reject and end the game (failure)
+
+Maximum of 10 rounds
+
+Results
+
+View final outcome
+
+Compare outcome with BATNA
+
+Export negotiation data to Excel
+
+Replay the game or return to the home screen
+
+📊 BATNA Mechanism (4 Groups)
+Group	Person A BATNA	Person B BATNA
+1	€0	€0
+2	€0	€300
+3	€0	€500
+4	€0	€600
+
+Successful negotiation: Money is split according to agreement
+
+Failed negotiation: Person A receives €0, Person B receives BATNA
+
+🗂️ Folder Structure
 d:\An\Game\
 ├── client/                 # React Frontend
 │   ├── src/
-│   │   ├── pages/         # Các trang chính
+│   │   ├── pages/          # Main pages
 │   │   │   ├── IntroScreen.jsx
 │   │   │   ├── GroupSelection.jsx
 │   │   │   ├── WaitingRoom.jsx
 │   │   │   ├── NegotiationScreen.jsx
 │   │   │   └── ResultScreen.jsx
-│   │   ├── context/       # React Context
+│   │   ├── context/        # React Context
 │   │   │   └── GameContext.jsx
-│   │   ├── services/      # API services
+│   │   ├── services/       # API services
 │   │   │   └── api.js
 │   │   ├── App.jsx
 │   │   ├── main.jsx
@@ -176,157 +196,176 @@ d:\An\Game\
 │   ├── vite.config.js
 │   └── tailwind.config.js
 │
-├── server/                # Node.js Backend
-│   ├── models/           # Mongoose models
+├── server/                 # Node.js Backend
+│   ├── models/             # Mongoose models
 │   │   ├── Player.js
 │   │   └── Game.js
-│   ├── controllers/      # Business logic
+│   ├── controllers/        # Business logic
 │   │   ├── gameController.js
 │   │   └── exportController.js
-│   ├── routes/           # API routes
+│   ├── routes/             # API routes
 │   │   └── gameRoutes.js
-│   ├── socket/           # Socket.io handlers
+│   ├── socket/             # Socket.io handlers
 │   │   └── socketHandlers.js
-│   ├── config/           # Configuration
+│   ├── config/             # Configuration
 │   │   └── db.js
-│   ├── server.js         # Entry point
+│   ├── server.js           # Entry point
 │   ├── package.json
 │   └── .env
 │
-├── package.json          # Root package
-├── readme.md            # Tài liệu gốc
-└── README_SETUP.md      # File này
-```
+├── package.json             # Root package
+├── readme.md               # Original documentation
+└── README_SETUP.md         # This file
 
-## 🔌 API Endpoints
+🔌 API Endpoints
+REST API
 
-### REST API
-- `POST /api/game/join` - Join game and create player
-- `GET /api/game/state/:pairId` - Get game state
-- `POST /api/game/offer` - Submit offer
-- `POST /api/game/response` - Submit response
-- `GET /api/game/export/:pairId` - Export game data to Excel
+POST /api/game/join – Join game and create player
 
-### Socket.io Events
+GET /api/game/state/:pairId – Get game state
 
-**Client → Server:**
-- `join_game` - Request pairing
-- `submit_offer` - Submit negotiation offer
-- `submit_response` - Submit response to offer
+POST /api/game/offer – Submit offer
 
-**Server → Client:**
-- `pair_found` - Pairing successful
-- `waiting_for_pair` - Still waiting for partner
-- `offer_received` - Received offer from opponent
-- `offer_sent` - Offer sent successfully
-- `turn_updated` - Turn changed, game continues
-- `game_ended` - Game finished
-- `opponent_disconnected` - Opponent left
-- `error` - Error occurred
+POST /api/game/response – Submit response
 
-## 🐛 Troubleshooting
+GET /api/game/export/:pairId – Export game data to Excel
 
-### MongoDB Connection Error
-```bash
-# Kiểm tra MongoDB đang chạy
+Socket.io Events
+Client → Server
+
+join_game – Request pairing
+
+submit_offer – Submit negotiation offer
+
+submit_response – Submit response to offer
+
+Server → Client
+
+pair_found – Pairing successful
+
+waiting_for_pair – Still waiting for partner
+
+offer_received – Received offer from opponent
+
+offer_sent – Offer sent successfully
+
+turn_updated – Turn updated, game continues
+
+game_ended – Game finished
+
+opponent_disconnected – Opponent disconnected
+
+error – Error occurred
+
+🐛 Troubleshooting
+MongoDB Connection Error
+# Check MongoDB service
 # Windows:
 net start MongoDB
 
-# Hoặc kiểm tra services
+# Or open services manager
 services.msc
-```
 
-### Port already in use
-```bash
-# Kiểm tra port đang dùng
+Port Already in Use
 netstat -ano | findstr :5000
 netstat -ano | findstr :3000
 
-# Kill process nếu cần
+# Kill process if needed
 taskkill /PID <PID> /F
-```
 
-### Dependencies error
-```bash
-# Xóa node_modules và reinstall
+Dependency Errors
 rmdir /s /q node_modules
 rmdir /s /q server\node_modules
 rmdir /s /q client\node_modules
 
 npm run install-all
-```
 
-### Socket connection issues
-- Đảm bảo server đang chạy trên port 5000
-- Kiểm tra firewall không block port
-- Xóa cache browser và reload
+Socket Connection Issues
 
-## 🚀 Production Build
+Ensure the server is running on port 5000
 
-### Build client
-```bash
+Check firewall is not blocking the port
+
+Clear browser cache and reload
+
+🚀 Production Build
+Build Client
 cd client
 npm run build
-```
 
-### Deploy recommendations
-- **Frontend:** Vercel, Netlify, hoặc serve từ Express
-- **Backend:** Heroku, Railway, DigitalOcean
-- **Database:** MongoDB Atlas
-- **Environment Variables:** Set đúng `MONGODB_URI`, `CLIENT_URL`
+Deployment Recommendations
 
-## 📝 Features đã implement
+Frontend: Vercel, Netlify, or serve via Express
 
-✅ Màn hình giới thiệu đẹp mắt với animation  
-✅ Chọn nhóm với 4 lựa chọn BATNA  
-✅ Tự động ghép cặp người chơi  
-✅ Real-time negotiation với Socket.io  
-✅ 4 lựa chọn phản hồi (Too Low, Accept, Better Offer, Not Accept)  
-✅ Hiển thị lịch sử đàm phán  
-✅ Tối đa 10 vòng  
-✅ Kết quả thành công/thất bại  
-✅ Export dữ liệu ra Excel  
-✅ Responsive design  
-✅ Toast notifications  
-✅ Loading states  
-✅ Error handling  
+Backend: Heroku, Railway, DigitalOcean
 
-## 🎨 Design Highlights
+Database: MongoDB Atlas
 
-- Gradient backgrounds và glassmorphism effects
-- Smooth animations với Framer Motion
-- Consistent color scheme (Blue & Purple theme)
-- Mobile-first responsive design
-- Intuitive user flow
-- Real-time feedback và visual cues
+Environment Variables: Correctly set MONGODB_URI, CLIENT_URL
 
-## 👨‍💻 Development
+📝 Implemented Features
 
-### Coding Standards
-- ES6+ JavaScript
-- Functional React components với Hooks
-- Async/await cho asynchronous operations
-- Clean code principles
-- Modular architecture
+✅ Animated introduction screen
+✅ Group selection with 4 BATNA options
+✅ Automatic player pairing
+✅ Real-time negotiation using Socket.io
+✅ 4 response options (Too Low, Accept, Better Offer, Not Accept)
+✅ Negotiation history display
+✅ Up to 10 rounds
+✅ Successful / failed outcomes
+✅ Excel data export
+✅ Responsive design
+✅ Toast notifications
+✅ Loading states
+✅ Error handling
 
-### Testing
-- Kiểm tra flow đầy đủ từ intro → result
-- Test với 2 browser tabs/windows đồng thời
-- Test các trường hợp edge cases
-- Verify Excel export
+🎨 Design Highlights
 
-## 📄 License
+Gradient backgrounds and glassmorphism effects
 
-MIT License - Dự án học tập và nghiên cứu
+Smooth animations with Framer Motion
 
-## 🤝 Contributing
+Consistent color scheme (Blue & Purple theme)
 
-Mọi đóng góp đều được hoan nghênh! Vui lòng tạo issue hoặc pull request.
+Mobile-first responsive design
 
-## 📧 Contact
+Intuitive user flow
 
-Nếu có vấn đề hoặc câu hỏi, vui lòng tạo issue trong repository.
+Real-time feedback and visual cues
 
----
+👨‍💻 Development
+Coding Standards
 
-**Happy Negotiating! 🚲💰**
+ES6+ JavaScript
+
+Functional React components with Hooks
+
+Async/await for asynchronous operations
+
+Clean code principles
+
+Modular architecture
+
+Testing
+
+Full flow testing from intro → result
+
+Test with two browser tabs/windows simultaneously
+
+Test edge cases
+
+Verify Excel export
+
+📄 License
+
+MIT License – Educational and research project
+
+🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+📧 Contact
+
+If you encounter issues or have questions, please create an issue in the repository.
+
+Happy Negotiating! 🚲💰
