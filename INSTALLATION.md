@@ -50,7 +50,7 @@ net start MongoDB
 net stop MongoDB
 ```
 
-**Check MongoDB đang chạy:**
+
 ```bash
 # Open Services
 # Win + R → type "services.msc" → Enter

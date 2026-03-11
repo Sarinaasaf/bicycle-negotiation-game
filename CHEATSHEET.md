@@ -65,7 +65,7 @@ npm run dev
  http://localhost:3000
 
 
-- Server logs: Terminal đang chạy `npm run dev`
+- Server logs: 
 - Client logs: Browser Console (F12)
 - MongoDB logs: Check MongoDB log file
 
