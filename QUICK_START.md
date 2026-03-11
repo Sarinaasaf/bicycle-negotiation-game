@@ -1,89 +1,84 @@
-# 🚀 Quick Start Guide
-
-## ⚡ Hướng dẫn nhanh (3 phút)
-
-### 1. Cài đặt MongoDB (nếu chưa có)
+### 🚀 Quick Start Guide
+## ⚡ Quick Guide (3 minutes)
+## Install MongoDB (if not installed yet)
 
 **Windows:**
 ```bash
-# Download từ: https://www.mongodb.com/try/download/community
-# Hoặc dùng MongoDB Atlas (cloud - miễn phí)
+# Download from: https://www.mongodb.com/try/download/community
+# Or use MongoDB Atlas (cloud - free)
+
+**check if MongoDB is running:**
+```bash
+# Open Services (Win + R → services.msc)
+# Find "MongoDB Server" and Start it
 ```
 
-**Kiểm tra MongoDB đang chạy:**
-```bash
-# Mở Services (Win + R → services.msc)
-# Tìm "MongoDB Server" và Start
-```
-
-### 2. Cài đặt Dependencies
+### 2.Install Dependencies
 
 ```bash
-# Từ thư mục d:\An\Game
+# From folder d:\An\Game
 npm run install-all
 ```
 
-Lệnh này sẽ:
-- Cài packages cho root
-- Cài packages cho server (Node.js)
-- Cài packages cho client (React)
+This command will:
+Install packages for the root
+Install packages for the server (Node.js)
+Install packages for the client (React)
 
-### 3. Chạy ứng dụng
+### 3. Run the application
 
 ```bash
 npm run dev
 ```
 
-Lệnh này tự động chạy đồng thời:
-- **Server** trên http://localhost:5000
-- **Client** trên http://localhost:3000
+This command automatically runs simultaneously:
+Server on http://localhost:5000
+Client on http://localhost:3000
+### 4. Open the browser
 
-### 4. Mở trình duyệt
-
-1. Mở 2 tab/window:
-   - Tab 1: http://localhost:3000 (Player 1)
-   - Tab 2: http://localhost:3000 (Player 2)
-
-2. Ở mỗi tab:
-   - Click "Start the Game"
-   - Chọn cùng một Group (ví dụ: Group 2)
-   - Hệ thống sẽ tự động ghép cặp
-
-3. Bắt đầu đàm phán!
-
----
-
-## 🎮 Test Flow đầy đủ
-
-### Scenario 1: Đàm phán thành công
-1. Player A đề nghị: A=400€, B=600€
-2. Player B chọn: **Accept**
-3. ✅ Kết quả: A nhận 400€, B nhận 600€
-
-### Scenario 2: Đàm phán thất bại (từ chối)
-1. Player A đề nghị: A=700€, B=300€
-2. Player B chọn: **Not Accept**
-3. ❌ Kết quả: A nhận 0€, B nhận BATNA (tùy group)
-
-### Scenario 3: Đàm phán nhiều vòng
-1. Player A đề nghị: A=600€, B=400€
-2. Player B chọn: **Too Low** (tiếp tục)
-3. Player B đề nghị: A=450€, B=550€
-4. Player A chọn: **Accept**
-5. ✅ Kết quả: A nhận 450€, B nhận 550€
-
-### Scenario 4: Hết 10 vòng
-1. Cứ chọn "Too Low" hoặc "Better Offer"
-2. Sau 10 vòng tự động kết thúc
-3. ❌ Kết quả: A nhận 0€, B nhận BATNA
+Open 2 tabs/windows:
+Tab 1: http://localhost:3000
+ (Player 1)
+Tab 2: http://localhost:3000
+ (Player 2)
+In each tab:
+Click "Start the Game"
+Select the same Group (for example: Group 2)
+The system will automatically match the players
+Start negotiating!
 
 ---
 
-## 📊 Kiểm tra Export Excel
+## 🎮 Full Test Flow
+## Scenario 1: Successful negotiation
+Player A proposes: A=400€, B=600€
+Player B selects: Accept
+✅ Result: A receives 400€, B receives 600€
 
-1. Sau khi game kết thúc, click "Export Data (Excel)"
-2. File sẽ tự động download: `negotiation_Pair_XXXX_timestamp.xlsx`
-3. Mở file để xem chi tiết từng vòng đàm phán
+### Scenario 2: Failed negotiation (rejection)
+Player A proposes: A=700€, B=300€
+Player B selects: Not Accept
+❌ Result: A receives 0€, B receives BATNA (depending on the group)
+
+### Scenario 3:Multiple negotiation rounds
+Player A proposes: A=600€, B=400€
+Player B selects: Too Low (continue)
+Player B proposes: A=450€, B=550€
+Player A selects: Accept
+✅ Result: A receives 450€, B receives 550€
+
+### Scenario 4:10 rounds reached
+Keep selecting "Too Low" or "Better Offer"
+After 10 rounds the game automatically ends
+❌ Result: A receives 0€, B receives BATNA
+
+---
+
+## 📊 Check Excel Export
+After the game ends, click "Export Data (Excel)"
+The file will automatically download:
+negotiation_Pair_XXXX_timestamp.xlsx
+Open the file to see detailed negotiation rounds
 
 ---
 
@@ -92,103 +87,96 @@ Lệnh này tự động chạy đồng thời:
 ### Issue 1: "Cannot connect to MongoDB"
 **Solution:**
 ```bash
-# Kiểm tra MongoDB service đang chạy
+# Check if MongoDB service is running
 net start MongoDB
 
-# Hoặc sửa server/.env để dùng MongoDB Atlas
+# Or edit server/.env to use MongoDB Atlas
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bicycle-game
 ```
 
 ### Issue 2: "Port 5000 already in use"
 **Solution:**
 ```bash
-# Tìm process đang dùng port
+# Find process using the port
 netstat -ano | findstr :5000
 
 # Kill process
 taskkill /PID <PID> /F
 
-# Hoặc đổi port trong server/.env
+# Or change port in server/.env
 PORT=5001
 ```
 
 ### Issue 3: "Module not found"
 **Solution:**
 ```bash
-# Xóa và cài lại
+# Delete and reinstall
 rmdir /s /q node_modules
 rmdir /s /q server\node_modules
 rmdir /s /q client\node_modules
 npm run install-all
 ```
 
-### Issue 4: "Socket connection failed"
-**Solution:**
-- Clear browser cache
-- Restart server
-- Kiểm tra firewall không block port 5000
-- Thử truy cập: http://localhost:5000/api/health
-
+### Issue 4:"Socket connection failed"
+Solution:
+Clear browser cache
+Restart server
+Check that the firewall is not blocking port 5000
+Try accessing: http://localhost:5000/api/health
 ---
 
-## 🎨 Các tính năng UI/UX đã implement
+## 🎨 Implemented UI/UX Features
 
-✨ **Animations & Transitions**
-- Smooth page transitions với Framer Motion
-- Loading states và skeleton screens
-- Micro-interactions trên buttons và cards
-- Real-time updates không reload trang
+## ✨ Animations & Transitions
 
-🎨 **Visual Design**
-- Gradient backgrounds (Blue & Purple theme)
-- Glassmorphism effects
-- Responsive cards và modals
-- Clean typography với contrast tốt
+Smooth page transitions with Framer Motion
 
-📱 **Responsive Design**
-- Mobile-first approach
-- Breakpoints cho tablet và desktop
-- Touch-friendly buttons
-- Adaptive layouts
+Loading states and skeleton screens
 
-🔔 **User Feedback**
-- Toast notifications cho mọi actions
-- Visual indicators cho turn
-- Progress bars và counters
-- Error messages rõ ràng
+Micro-interactions on buttons and cards
 
----
+Real-time updates without page reload
 
-## 💡 Tips để test tốt hơn
+## 🎨 Visual Design
 
-1. **Test trên nhiều devices:**
-   - Desktop browser
-   - Mobile responsive mode (F12 → Device toolbar)
-   - Tablet size
+Gradient backgrounds (Blue & Purple theme)
 
-2. **Test network conditions:**
-   - Simulate slow connection (DevTools → Network → Slow 3G)
-   - Test disconnect scenarios
+Glassmorphism effects
 
-3. **Test edge cases:**
-   - Invalid offers (không bằng 1000)
-   - Rapid clicking
-   - Browser back button
-   - Refresh giữa chừng
+Responsive cards and modals
 
-4. **Test pairing:**
-   - Chỉ 1 player vào (should wait)
-   - 2 players khác group (không pair)
-   - 2 players cùng group (pair thành công)
+Clean typography with good contrast
 
----
+## 📱 Responsive Design
+Mobile-first approach
+Breakpoints for tablet and desktop
+Touch-friendly buttons
+Adaptive layouts
 
-## 📚 Tài liệu thêm
+## 🔔 User Feedback
 
-- **Game Rules:** Xem `readme.md` hoặc `new.txt`
-- **Full Setup:** Xem `README_SETUP.md`
-- **API Docs:** Xem phần API Endpoints trong README_SETUP.md
-
----
-
-**Chúc bạn test vui vẻ! 🎉**
+Toast notifications for all actions
+Visual indicators for turns
+Progress bars and counters
+Clear error messages
+### 💡 Tips for Better Testing
+Test on multiple devices
+Desktop browser
+Mobile responsive mode (F12 → Device toolbar)
+Tablet size
+## Test network conditions
+Simulate slow connection (DevTools → Network → Slow 3G)
+Test disconnect scenarios
+## Test edge cases
+Invalid offers (not equal to 1000)
+Rapid clicking
+Browser back button
+Refresh during the game
+## Test pairing
+Only 1 player joins (should wait)
+2 players in different groups (should not pair)
+2 players in the same group (pair successfully)
+## 📚 Additional Documentation
+Game Rules: see readme.md or new.txt
+Full Setup: see README_SETUP.md
+API Docs: see the API Endpoints section in README_SETUP.md

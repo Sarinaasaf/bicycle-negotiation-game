@@ -1,80 +1,75 @@
 # 🎮 Bicycle Negotiation Game - Command Cheat Sheet
 
-## 🚀 Quick Commands
 
-### Cài đặt
+
 ```bash
-npm run install-all              # Cài tất cả dependencies
+npm run install-all              
 ```
 
-### Chạy ứng dụng
+
 ```bash
-npm run dev                      # Chạy cả server + client
-npm run server                   # Chỉ chạy server
-npm run client                   # Chỉ chạy client
+npm run dev                      
+npm run server                   
+npm run client                   
 ```
 
-### MongoDB
+
 ```bash
-net start MongoDB               # Start MongoDB service
-net stop MongoDB                # Stop MongoDB service
+net start MongoDB              
+net stop MongoDB                
 ```
 
-### Kiểm tra
+
 ```bash
-# Health check
+
 curl http://localhost:5000/api/health
 
-# Hoặc mở browser
+
 http://localhost:5000/api/health
 http://localhost:3000
 ```
 
-### Debug
+
 ```bash
-# Xem processes đang dùng port
+
 netstat -ano | findstr :5000
 netstat -ano | findstr :3000
 
-# Kill process
+
 taskkill /PID <PID> /F
 
-# Kill tất cả Node processes
+
 taskkill /F /IM node.exe
 ```
 
-### Clean & Rebuild
+
 ```bash
-# Xóa node_modules
+
 rmdir /s /q node_modules
 rmdir /s /q server\node_modules
 rmdir /s /q client\node_modules
 
-# Cài lại
+
 npm run install-all
 ```
 
 ---
 
-## 📝 Development Workflow
 
-### 1. Khởi động hàng ngày
 ```bash
 cd d:\An\Game
 npm run dev
 ```
 
-### 2. Test với 2 players
-- Mở 2 tabs: http://localhost:3000
-- Chọn cùng group
-- Bắt đầu negotiation
 
-### 3. Xem logs
+ http://localhost:3000
+
+
 - Server logs: Terminal đang chạy `npm run dev`
 - Client logs: Browser Console (F12)
 - MongoDB logs: Check MongoDB log file
 
-### 4. Stop và restart
+
 ```bash
 # Stop: Ctrl + C trong terminal
 # Start: npm run dev
@@ -86,39 +81,37 @@ npm run dev
 
 ### MongoDB issues
 ```bash
-# Kiểm tra service
+
 net start MongoDB
 
-# Xem MongoDB logs
+
 type "C:\Program Files\MongoDB\Server\6.0\log\mongod.log"
 
-# Connect to MongoDB shell
+
 mongosh
 ```
 
-### Port conflicts
+
 ```bash
-# Tìm process
+
 netstat -ano | findstr :5000
 
-# Kill specific process
+
 taskkill /PID <PID> /F
 
-# Hoặc đổi port trong server/.env
+
 PORT=5001
 ```
 
-### Module errors
+
 ```bash
-# Clear cache
+
 npm cache clean --force
 
-# Remove và reinstall
 rmdir /s /q node_modules
 npm install
 ```
 
-### Build errors
 ```bash
 cd client
 rmdir /s /q dist
@@ -127,25 +120,25 @@ npm run build
 
 ---
 
-## 📊 Useful MongoDB Commands
+
 
 ```bash
-# Connect to MongoDB
+
 mongosh
 
-# Show databases
+
 show dbs
 
-# Use bicycle-game database
+
 use bicycle-negotiation-game
 
-# Show collections
+
 show collections
 
-# Find all players
+
 db.players.find().pretty()
 
-# Find all games
+
 db.games.find().pretty()
 
 # Clear all players
@@ -240,7 +233,7 @@ d:\An\Game\
 
 ---
 
-## 💾 Git Commands (nếu dùng Git)
+## 💾 Git Commands 
 
 ```bash
 # Initialize repository

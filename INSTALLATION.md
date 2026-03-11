@@ -1,18 +1,18 @@
-# 📝 INSTALLATION COMMANDS - Chạy từng bước
+# 📝 INSTALLATION COMMANDS 
 
-## Bước 1: Cài đặt packages
 
-### Mở Command Prompt (CMD) tại thư mục dự án
+## Step 1: Install packages
+
+### Open Command Prompt (CMD) in the project folder
 ```bash
 cd d:\An\Game
 ```
 
-### Cài tất cả dependencies một lần
 ```bash
 npm run install-all
 ```
 
-**Hoặc cài từng phần:**
+
 
 ```bash
 # 1. Root dependencies
@@ -31,14 +31,14 @@ cd ..
 
 ---
 
-## Bước 2: Setup MongoDB
+## 2: Setup MongoDB
 
 ### Option A: MongoDB Local (Recommended for development)
 
-**Nếu chưa cài MongoDB:**
+
 1. Download: https://www.mongodb.com/try/download/community
-2. Cài đặt với default settings
-3. MongoDB sẽ tự chạy như Windows Service
+2.  default settings
+3. MongoDB will automatically run a Windows Service
 
 **Start MongoDB Service:**
 ```bash
@@ -52,18 +52,18 @@ net stop MongoDB
 
 **Check MongoDB đang chạy:**
 ```bash
-# Mở Services
-# Win + R → gõ "services.msc" → Enter
-# Tìm "MongoDB Server" → phải ở trạng thái "Running"
+# Open Services
+# Win + R → type "services.msc" → Enter
+# Find "MongoDB Server" → must be in "Running" state
 ```
 
 ### Option B: MongoDB Atlas (Cloud - Free)
 
-1. Đăng ký tài khoản: https://www.mongodb.com/cloud/atlas/register
-2. Tạo Free Cluster
-3. Tạo Database User
-4. Get Connection String
-5. Sửa file `server/.env`:
+1. Register an account: https://www.mongodb.com/cloud/atlas/register
+2. Create a Free Cluster
+3. Create a Database User
+4. Get the Connection String
+5. Edit the file `server/.env`:
 
 ```env
 PORT=5000
@@ -73,21 +73,23 @@ NODE_ENV=development
 
 ---
 
-## Bước 3: Chạy ứng dụng
+## Step 3: Run the application
 
-### Option A: Chạy đồng thời Server + Client (Recommended)
+### Option A: Run Server + Client at the same time (Recommended)
 
 ```bash
-# Từ thư mục root (d:\An\Game)
+# From the root folder (d:\An\Game)
 npm run dev
 ```
 
-Kết quả:
-- ✅ Server chạy trên: http://localhost:5000
-- ✅ Client chạy trên: http://localhost:3000
-- ✅ Cả 2 cùng chạy trong 1 terminal
+Result 
+✅ Server runs on: http://localhost:5000
 
-### Option B: Chạy riêng từng phần
+✅ Client runs on: http://localhost:3000
+
+✅ Both run in one terminal
+
+### Option B: Run each part separately
 
 **Terminal 1 - Server:**
 ```bash
@@ -95,7 +97,7 @@ cd d:\An\Game\server
 npm run dev
 ```
 
-**Terminal 2 - Client (mở terminal mới):**
+**Terminal 2 - Client (open a new terminal):**
 ```bash
 cd d:\An\Game\client
 npm run dev
@@ -103,9 +105,9 @@ npm run dev
 
 ---
 
-## Bước 4: Test ứng dụng
+## Step 4: Test the application
 
-### Mở 2 browser tabs
+### open 2 browser tabs
 
 **Tab 1 (Player 1):**
 ```
@@ -119,38 +121,34 @@ http://localhost:3000
 
 ### Flow test:
 
-1. **Ở cả 2 tabs:**
-   - Click "Start the Game"
-   
-2. **Chọn cùng một Group (ví dụ: Group 2):**
-   - Tab 1: Click "Group 2"
-   - Tab 2: Click "Group 2"
-   
-3. **Hệ thống tự động ghép cặp:**
-   - Tab 1 → Person A
-   - Tab 2 → Person B
-   
-4. **Bắt đầu đàm phán:**
-   - Person A (Tab 1) đề nghị: A=500€, B=500€
-   - Click "Submit Offer"
-   - Person B (Tab 2) nhận offer
-   - Chọn response: "Accept"
-   
-5. **Xem kết quả:**
-   - Cả 2 tabs tự động chuyển sang màn hình Result
-   - Click "Export Data" để tải Excel
+In both tabs:
+Click "Start the Game"
+Choose the same Group (for example: Group 2):
+Tab 1: Click "Group 2"
+Tab 2: Click "Group 2"
+The system automatically matches players:
+Tab 1 → Person A
+Tab 2 → Person B
+Start negotiating:
+Person A (Tab 1) proposes: A=500€, B=500€
+Click "Submit Offer"
+Person B (Tab 2) receives offer
+Choose response: "Accept"
+View results:
+Both tabs automatically switch to the Result screen
+Click "Export Data" to download Exce
 
 ---
 
 ## 🔍 Verify Installation
 
-### Kiểm tra Server đang chạy:
+### Check if Server is running:
 ```bash
-# Mở browser hoặc dùng curl
+# open browser or use curl
 curl http://localhost:5000/api/health
 ```
 
-Kết quả mong đợi:
+expected result:
 ```json
 {
   "status": "ok",
@@ -158,16 +156,17 @@ Kết quả mong đợi:
 }
 ```
 
-### Kiểm tra Client đang chạy:
+### Check if client is running:
 ```bash
-# Mở browser
+# open browser
 http://localhost:3000
 ```
 
-Nên thấy màn hình "Welcome to the Bicycle Negotiation Game!"
+you should see "Welcome to the Bicycle Negotiation Game!"
 
-### Kiểm tra MongoDB connection:
-Xem terminal của server, nên thấy:
+### Check MongoDB connection:
+Look at the server terminal, you should see:
+
 ```
 ✅ MongoDB Connected: localhost
 ```
@@ -176,30 +175,28 @@ Xem terminal của server, nên thấy:
 
 ## 🛑 Stop Application
 
-### Nếu chạy với `npm run dev`:
-- Nhấn `Ctrl + C` trong terminal
-- Chọn `Y` khi hỏi "Terminate batch job"
+### If running with npm run dev:
 
-### Nếu chạy riêng:
-- Stop cả 2 terminals (Server và Client)
-- Nhấn `Ctrl + C` ở mỗi terminal
+Press Ctrl + C in terminal
+Choose Y when asked "Terminate batch job"
+
+### If running separately:
+
+Stop both terminals (Server and Client)
+Press Ctrl + C in each termina
 
 ---
 
 ## 🔄 Restart Application
 
 ```bash
-# Từ thư mục root
 npm run dev
 ```
 
-Hoặc nếu cần clean restart:
 
 ```bash
-# Kill tất cả Node processes
 taskkill /F /IM node.exe
 
-# Start lại
 npm run dev
 ```
 
@@ -213,7 +210,7 @@ cd client
 npm run build
 ```
 
-Build output sẽ ở: `client/dist/`
+
 
 ### Serve production build:
 ```bash
@@ -223,24 +220,21 @@ npm run preview
 
 ---
 
-## 🧹 Clean Installation (nếu có lỗi)
+## 🧹 Clean Installation
 
-### Xóa tất cả node_modules:
 ```bash
-# Từ root
+
 rmdir /s /q node_modules
 rmdir /s /q server\node_modules
 rmdir /s /q client\node_modules
 ```
 
-### Xóa package-lock.json:
 ```bash
 del package-lock.json
 del server\package-lock.json
 del client\package-lock.json
 ```
 
-### Cài lại:
 ```bash
 npm run install-all
 ```
@@ -251,36 +245,32 @@ npm run install-all
 
 ### Root (d:\An\Game)
 ```bash
-npm run dev           # Chạy server + client đồng thời
-npm run server        # Chỉ chạy server
-npm run client        # Chỉ chạy client
-npm run install-all   # Cài tất cả dependencies
+npm run dev          
+npm run server        
+npm run client        
+npm run install-all   
 ```
 
 ### Server (d:\An\Game\server)
 ```bash
-npm run dev          # Chạy server với nodemon (auto-reload)
-npm start            # Chạy server production
+npm run dev          
+npm start            
 ```
 
 ### Client (d:\An\Game\client)
 ```bash
-npm run dev          # Chạy dev server với hot reload
-npm run build        # Build cho production
-npm run preview      # Preview production build
+npm run dev         
+npm run build        
+npm run preview      
 ```
 
 ---
 
-## ✅ Checklist trước khi chạy
+## ✅ Checklist 
 
-- [ ] Node.js đã cài (v16+)
-- [ ] MongoDB đang chạy (local hoặc Atlas)
-- [ ] Đã chạy `npm run install-all`
-- [ ] File `server/.env` tồn tại và đúng
-- [ ] Port 5000 và 3000 chưa bị dùng
-- [ ] Không có lỗi khi cài packages
-
----
-
-**Nếu mọi thứ OK, chạy `npm run dev` và enjoy! 🎉**
+ Node.js installed (v16+)
+ MongoDB running (local or Atlas)
+ Ran npm run install-all
+ File server/.env exists and is correct
+ Port 5000 and 3000 are not in use
+ No errors when installing packages

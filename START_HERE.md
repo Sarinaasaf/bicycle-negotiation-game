@@ -1,34 +1,32 @@
-# 🚀 START HERE - Bắt đầu từ đây
 
-## 📋 3 Bước để chạy game
 
-### 1️⃣ Cài đặt (chỉ làm 1 lần)
-```bash
+# 🚀 START HERE - Start here
+
+## 📋 3 Steps to run the game
+
+### 1️⃣ Installation (only needs to be done once)
 cd d:\An\Game
 npm run install-all
-```
 
 ### 2️⃣ Start MongoDB
-```bash
 net start MongoDB
-```
 
-### 3️⃣ Chạy game
-```bash
+### 3️⃣ Run the game
 npm run dev
-```
 
-### 4️⃣ Mở browser
+### 4️⃣ Open browser
 - http://localhost:3000 (2 tabs)
 
 ---
 
-## 📖 Đọc thêm
+## 📖 Read more
 
-- **Tiếng Việt:** Đọc `HUONG_DAN.md`
-- **English:** Đọc `QUICK_START.md`
-- **Chi tiết:** Đọc `README_SETUP.md`
+- **Vietnamese:** Read `HUONG_DAN.md`
+- **English:** Read `QUICK_START.md`
+- **Details:** Read `README_SETUP.md`
 
 ---
 
 **That's it! Enjoy! 🎉**
+
+

@@ -37,13 +37,13 @@ const responseOptions = [
   },
 ];
 
-// kurzer Hinweis, wer wie viel ins Fahrrad gesteckt hat
+
 const CONTRIBUTIONS = {
   A: 200,
   B: 600,
 };
 
-// Alternative je Gruppe – ohne das Wort BATNA
+
 const GROUP_ALTERNATIVES = {
   1: { A: 0, B: 0 },
   2: { A: 0, B: 250 },
@@ -61,9 +61,9 @@ const NegotiationScreen = () => {
   const {
     socket,
     playerId,
-    role, // 'A' oder 'B'
+    role, 
     pairId,
-    batna, // eigene Alternative
+    batna, 
     groupNumber,
     currentTurn,
     setCurrentTurn,

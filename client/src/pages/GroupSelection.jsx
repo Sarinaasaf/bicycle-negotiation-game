@@ -16,7 +16,7 @@ const groups = [
 export default function GroupSelection() {
   const navigate = useNavigate();
 
-  // ✅ WICHTIG: playerId setzen, sonst pairt der Server nicht sauber (dein Server nutzt playerId als key)
+  
   const { socket, setGroupNumber, setPlayerId } = useGame();
 
   const isReady = !!socket && socket.connected;
@@ -27,13 +27,13 @@ export default function GroupSelection() {
       return;
     }
 
-    // ✅ Group speichern
+   
     setGroupNumber(g.id);
 
-    // ✅ playerId speichern (wir nehmen socket.id, weil dein socketHandlers join_game playerId erwartet)
+    
     setPlayerId(socket.id);
 
-    // ✅ weiter wie früher
+    
     navigate('/waiting');
   };
 

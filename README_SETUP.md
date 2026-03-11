@@ -1,332 +1,224 @@
-# 🚲 Bicycle Negotiation Game
+Hier ist dein Text **1:1 auf Englisch übersetzt**, mit derselben Struktur und Formatierung:
 
-A real-time two-player negotiation simulation game built with React, Node.js, Socket.io, and MongoDB.
+````
+# 🚀 Quick Start Guide
 
-## 📋 Tổng quan dự án
+## ⚡ Quick Guide (3 minutes)
 
-Trò chơi mô phỏng tình huống đàm phán giữa hai người (A và B) về việc chia €1,000 từ việc bán một chiếc xe đạp hoàn chỉnh. Mỗi người sở hữu một phần của xe đạp và phải đàm phán để đạt được thỏa thuận.
+### 1. Install MongoDB (if not installed yet)
 
-## ✨ Tính năng chính
-
-- 🎮 **Real-time multiplayer** với Socket.io
-- 🎨 **Giao diện đẹp mắt** với Tailwind CSS và Framer Motion
-- 🎯 **4 nhóm chơi** với giá trị BATNA khác nhau
-- ⚡ **Tự động ghép cặp** người chơi
-- 📊 **Theo dõi lịch sử đàm phán** theo thời gian thực
-- 💾 **Export dữ liệu** ra file Excel
-- 🔄 **Tối đa 10 vòng đàm phán**
-- 📱 **Responsive design** cho mọi thiết bị
-
-## 🛠️ Tech Stack
-
-### Frontend
-- React 18
-- Vite
-- React Router DOM
-- Socket.io Client
-- Tailwind CSS
-- Framer Motion
-- Axios
-- React Toastify
-
-### Backend
-- Node.js
-- Express
-- Socket.io
-- MongoDB với Mongoose
-- ExcelJS
-- Nanoid
-
-## 📦 Cài đặt
-
-### Yêu cầu hệ thống
-- Node.js (v16 trở lên)
-- MongoDB (local hoặc MongoDB Atlas)
-- npm hoặc yarn
-
-### Bước 1: Clone repository
+**Windows:**
 ```bash
-cd d:\An\Game
+# Download from: https://www.mongodb.com/try/download/community
+# Or use MongoDB Atlas (cloud - free)
+````
+
+**Check if MongoDB is running:**
+
+```bash
+# Open Services (Win + R → services.msc)
+# Find "MongoDB Server" and Start it
 ```
 
-### Bước 2: Cài đặt dependencies
+### 2. Install Dependencies
 
-**Cài tất cả (root + server + client):**
 ```bash
+# From folder d:\An\Game
 npm run install-all
 ```
 
-**Hoặc cài từng phần:**
-```bash
-# Root
-npm install
+This command will:
 
-# Server
-cd server
-npm install
+* Install packages for root
+* Install packages for server (Node.js)
+* Install packages for client (React)
 
-# Client
-cd client
-npm install
-```
+### 3. Run the application
 
-### Bước 3: Cấu hình MongoDB
-
-1. **Nếu dùng MongoDB local:**
-   - Đảm bảo MongoDB đang chạy trên `localhost:27017`
-   - File `server/.env` đã được tạo sẵn với cấu hình mặc định
-
-2. **Nếu dùng MongoDB Atlas:**
-   - Tạo cluster trên MongoDB Atlas
-   - Lấy connection string
-   - Sửa file `server/.env`:
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/bicycle-game?retryWrites=true&w=majority
-   NODE_ENV=development
-   ```
-
-### Bước 4: Chạy ứng dụng
-
-**Chạy đồng thời server và client:**
 ```bash
 npm run dev
 ```
 
-**Hoặc chạy riêng:**
+This command automatically runs simultaneously:
 
-```bash
-# Terminal 1 - Server
-cd server
-npm run dev
+* **Server** on [http://localhost:5000](http://localhost:5000)
+* **Client** on [http://localhost:3000](http://localhost:3000)
 
-# Terminal 2 - Client
-cd client
-npm run dev
-```
+### 4. Open the browser
 
-### Bước 5: Truy cập ứng dụng
+1. Open 2 tabs/windows:
 
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:5000
-- **Health Check:** http://localhost:5000/api/health
+   * Tab 1: [http://localhost:3000](http://localhost:3000) (Player 1)
+   * Tab 2: [http://localhost:3000](http://localhost:3000) (Player 2)
 
-## 🎮 Hướng dẫn chơi
+2. In each tab:
 
-1. **Màn hình giới thiệu**
-   - Đọc thông tin về trò chơi
-   - Nhấn "Start the Game"
+   * Click "Start the Game"
+   * Select the same Group (for example: Group 2)
+   * The system will automatically match the pair
 
-2. **Chọn nhóm (1-4)**
-   - Mỗi nhóm có giá trị BATNA khác nhau cho Person B
-   - Chọn một nhóm để tham gia
-
-3. **Phòng chờ**
-   - Hệ thống tự động tìm đối thủ trong cùng nhóm
-   - Được phân vai ngẫu nhiên (Person A hoặc B)
-
-4. **Đàm phán**
-   - Người chơi lần lượt đưa ra đề nghị chia €1,000
-   - Đối phương chọn 1 trong 4 phản hồi:
-     - **Too Low:** Từ chối, tiếp tục đàm phán
-     - **Accept:** Chấp nhận, kết thúc game (thành công)
-     - **Better Offer:** Có lựa chọn tốt hơn, tiếp tục đàm phán
-     - **Not Accept:** Không chấp nhận, kết thúc game (thất bại)
-   - Tối đa 10 vòng
-
-5. **Kết quả**
-   - Xem kết quả cuối cùng
-   - So sánh với BATNA
-   - Export dữ liệu ra Excel
-   - Chơi lại hoặc về trang chủ
-
-## 📊 Cơ chế BATNA (4 nhóm)
-
-| Nhóm | Person A BATNA | Person B BATNA |
-|------|----------------|----------------|
-| 1    | €0             | €0             |
-| 2    | €0             | €300           |
-| 3    | €0             | €500           |
-| 4    | €0             | €600           |
-
-- Nếu đàm phán **thành công**: Chia tiền theo thỏa thuận
-- Nếu đàm phán **thất bại**: Person A nhận €0, Person B nhận BATNA
-
-## 🗂️ Cấu trúc thư mục
-
-```
-d:\An\Game\
-├── client/                 # React Frontend
-│   ├── src/
-│   │   ├── pages/         # Các trang chính
-│   │   │   ├── IntroScreen.jsx
-│   │   │   ├── GroupSelection.jsx
-│   │   │   ├── WaitingRoom.jsx
-│   │   │   ├── NegotiationScreen.jsx
-│   │   │   └── ResultScreen.jsx
-│   │   ├── context/       # React Context
-│   │   │   └── GameContext.jsx
-│   │   ├── services/      # API services
-│   │   │   └── api.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
-│
-├── server/                # Node.js Backend
-│   ├── models/           # Mongoose models
-│   │   ├── Player.js
-│   │   └── Game.js
-│   ├── controllers/      # Business logic
-│   │   ├── gameController.js
-│   │   └── exportController.js
-│   ├── routes/           # API routes
-│   │   └── gameRoutes.js
-│   ├── socket/           # Socket.io handlers
-│   │   └── socketHandlers.js
-│   ├── config/           # Configuration
-│   │   └── db.js
-│   ├── server.js         # Entry point
-│   ├── package.json
-│   └── .env
-│
-├── package.json          # Root package
-├── readme.md            # Tài liệu gốc
-└── README_SETUP.md      # File này
-```
-
-## 🔌 API Endpoints
-
-### REST API
-- `POST /api/game/join` - Join game and create player
-- `GET /api/game/state/:pairId` - Get game state
-- `POST /api/game/offer` - Submit offer
-- `POST /api/game/response` - Submit response
-- `GET /api/game/export/:pairId` - Export game data to Excel
-
-### Socket.io Events
-
-**Client → Server:**
-- `join_game` - Request pairing
-- `submit_offer` - Submit negotiation offer
-- `submit_response` - Submit response to offer
-
-**Server → Client:**
-- `pair_found` - Pairing successful
-- `waiting_for_pair` - Still waiting for partner
-- `offer_received` - Received offer from opponent
-- `offer_sent` - Offer sent successfully
-- `turn_updated` - Turn changed, game continues
-- `game_ended` - Game finished
-- `opponent_disconnected` - Opponent left
-- `error` - Error occurred
-
-## 🐛 Troubleshooting
-
-### MongoDB Connection Error
-```bash
-# Kiểm tra MongoDB đang chạy
-# Windows:
-net start MongoDB
-
-# Hoặc kiểm tra services
-services.msc
-```
-
-### Port already in use
-```bash
-# Kiểm tra port đang dùng
-netstat -ano | findstr :5000
-netstat -ano | findstr :3000
-
-# Kill process nếu cần
-taskkill /PID <PID> /F
-```
-
-### Dependencies error
-```bash
-# Xóa node_modules và reinstall
-rmdir /s /q node_modules
-rmdir /s /q server\node_modules
-rmdir /s /q client\node_modules
-
-npm run install-all
-```
-
-### Socket connection issues
-- Đảm bảo server đang chạy trên port 5000
-- Kiểm tra firewall không block port
-- Xóa cache browser và reload
-
-## 🚀 Production Build
-
-### Build client
-```bash
-cd client
-npm run build
-```
-
-### Deploy recommendations
-- **Frontend:** Vercel, Netlify, hoặc serve từ Express
-- **Backend:** Heroku, Railway, DigitalOcean
-- **Database:** MongoDB Atlas
-- **Environment Variables:** Set đúng `MONGODB_URI`, `CLIENT_URL`
-
-## 📝 Features đã implement
-
-✅ Màn hình giới thiệu đẹp mắt với animation  
-✅ Chọn nhóm với 4 lựa chọn BATNA  
-✅ Tự động ghép cặp người chơi  
-✅ Real-time negotiation với Socket.io  
-✅ 4 lựa chọn phản hồi (Too Low, Accept, Better Offer, Not Accept)  
-✅ Hiển thị lịch sử đàm phán  
-✅ Tối đa 10 vòng  
-✅ Kết quả thành công/thất bại  
-✅ Export dữ liệu ra Excel  
-✅ Responsive design  
-✅ Toast notifications  
-✅ Loading states  
-✅ Error handling  
-
-## 🎨 Design Highlights
-
-- Gradient backgrounds và glassmorphism effects
-- Smooth animations với Framer Motion
-- Consistent color scheme (Blue & Purple theme)
-- Mobile-first responsive design
-- Intuitive user flow
-- Real-time feedback và visual cues
-
-## 👨‍💻 Development
-
-### Coding Standards
-- ES6+ JavaScript
-- Functional React components với Hooks
-- Async/await cho asynchronous operations
-- Clean code principles
-- Modular architecture
-
-### Testing
-- Kiểm tra flow đầy đủ từ intro → result
-- Test với 2 browser tabs/windows đồng thời
-- Test các trường hợp edge cases
-- Verify Excel export
-
-## 📄 License
-
-MIT License - Dự án học tập và nghiên cứu
-
-## 🤝 Contributing
-
-Mọi đóng góp đều được hoan nghênh! Vui lòng tạo issue hoặc pull request.
-
-## 📧 Contact
-
-Nếu có vấn đề hoặc câu hỏi, vui lòng tạo issue trong repository.
+3. Start negotiating!
 
 ---
 
-**Happy Negotiating! 🚲💰**
+## 🎮 Full Test Flow
+
+### Scenario 1: Successful negotiation
+
+1. Player A proposes: A=400€, B=600€
+2. Player B chooses: **Accept**
+3. ✅ Result: A receives 400€, B receives 600€
+
+### Scenario 2: Negotiation failure (rejection)
+
+1. Player A proposes: A=700€, B=300€
+2. Player B chooses: **Not Accept**
+3. ❌ Result: A receives 0€, B receives BATNA (depending on group)
+
+### Scenario 3: Multiple negotiation rounds
+
+1. Player A proposes: A=600€, B=400€
+2. Player B chooses: **Too Low** (continue)
+3. Player B proposes: A=450€, B=550€
+4. Player A chooses: **Accept**
+5. ✅ Result: A receives 450€, B receives 550€
+
+### Scenario 4: 10 rounds reached
+
+1. Keep choosing "Too Low" or "Better Offer"
+2. After 10 rounds the game automatically ends
+3. ❌ Result: A receives 0€, B receives BATNA
+
+---
+
+## 📊 Check Excel Export
+
+1. After the game ends, click "Export Data (Excel)"
+2. The file will automatically download: `negotiation_Pair_XXXX_timestamp.xlsx`
+3. Open the file to see detailed negotiation rounds
+
+---
+
+## 🐛 Common Issues & Solutions
+
+### Issue 1: "Cannot connect to MongoDB"
+
+**Solution:**
+
+```bash
+# Check MongoDB service is running
+net start MongoDB
+
+# Or edit server/.env to use MongoDB Atlas
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bicycle-game
+```
+
+### Issue 2: "Port 5000 already in use"
+
+**Solution:**
+
+```bash
+# Find process using port
+netstat -ano | findstr :5000
+
+# Kill process
+taskkill /PID <PID> /F
+
+# Or change port in server/.env
+PORT=5001
+```
+
+### Issue 3: "Module not found"
+
+**Solution:**
+
+```bash
+# Delete and reinstall
+rmdir /s /q node_modules
+rmdir /s /q server\node_modules
+rmdir /s /q client\node_modules
+npm run install-all
+```
+
+### Issue 4: "Socket connection failed"
+
+**Solution:**
+
+* Clear browser cache
+* Restart server
+* Check firewall is not blocking port 5000
+* Try accessing: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+---
+
+## 🎨 Implemented UI/UX Features
+
+✨ **Animations & Transitions**
+
+* Smooth page transitions with Framer Motion
+* Loading states and skeleton screens
+* Micro-interactions on buttons and cards
+* Real-time updates without page reload
+
+🎨 **Visual Design**
+
+* Gradient backgrounds (Blue & Purple theme)
+* Glassmorphism effects
+* Responsive cards and modals
+* Clean typography with good contrast
+
+📱 **Responsive Design**
+
+* Mobile-first approach
+* Breakpoints for tablet and desktop
+* Touch-friendly buttons
+* Adaptive layouts
+
+🔔 **User Feedback**
+
+* Toast notifications for all actions
+* Visual indicators for turns
+* Progress bars and counters
+* Clear error messages
+
+---
+
+## 💡 Tips for Better Testing
+
+1. **Test on multiple devices:**
+
+   * Desktop browser
+   * Mobile responsive mode (F12 → Device toolbar)
+   * Tablet size
+
+2. **Test network conditions:**
+
+   * Simulate slow connection (DevTools → Network → Slow 3G)
+   * Test disconnect scenarios
+
+3. **Test edge cases:**
+
+   * Invalid offers (not equal to 1000)
+   * Rapid clicking
+   * Browser back button
+   * Refresh during the game
+
+4. **Test pairing:**
+
+   * Only 1 player joins (should wait)
+   * 2 players in different groups (no pairing)
+   * 2 players in the same group (pair successfully)
+
+---
+
+## 📚 Additional Documentation
+
+* **Game Rules:** see `readme.md` or `new.txt`
+* **Full Setup:** see `README_SETUP.md`
+* **API Docs:** see API Endpoints section in README_SETUP.md
+
+---
+
+
+```
+```

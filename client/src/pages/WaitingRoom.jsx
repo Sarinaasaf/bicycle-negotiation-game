@@ -19,7 +19,7 @@ const WaitingRoom = () => {
     setGameStatus
   } = useGame();
 
-  // ✅ verhindert mehrfaches join_game (React re-render / StrictMode)
+  
   const didJoinRef = useRef(false);
 
   useEffect(() => {
@@ -33,11 +33,11 @@ const WaitingRoom = () => {
       return;
     }
 
-    // warten bis socket.id existiert
+    
     const effectivePlayerId = playerId || socket.id;
     if (!effectivePlayerId) return;
 
-    // ✅ join_game nur EINMAL senden
+    
     if (!didJoinRef.current) {
       didJoinRef.current = true;
 
@@ -58,7 +58,7 @@ const WaitingRoom = () => {
 
       toast.success(`Paired successfully! You are Person ${data.role}`);
 
-      // schnell weiter
+      
       setTimeout(() => navigate('/negotiate'), 500);
     };
 

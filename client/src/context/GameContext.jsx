@@ -29,17 +29,17 @@ export const GameProvider = ({ children }) => {
 
   const [currentTurn, setCurrentTurn] = useState(null);
   const [currentRound, setCurrentRound] = useState(1);
-  const [gameStatus, setGameStatus] = useState('idle'); // idle, waiting, active, completed, failed
+  const [gameStatus, setGameStatus] = useState('idle'); 
   const [rounds, setRounds] = useState([]);
   const [gameResult, setGameResult] = useState(null);
 
-  // ---- prevent toast spam ----
+  
   const wakingToastIdRef = useRef(null);
   const lastWakingToastAtRef = useRef(0);
 
   const showWakingToast = () => {
     const now = Date.now();
-    const cooldownMs = 8000; // throttle
+    const cooldownMs = 8000; 
     if (now - lastWakingToastAtRef.current < cooldownMs) return;
     lastWakingToastAtRef.current = now;
 
@@ -58,7 +58,7 @@ export const GameProvider = ({ children }) => {
     wakingToastIdRef.current = null;
   };
 
-  // ---- localStorage sync ----
+  // localStorage sync 
   useEffect(() => {
     if (playerId) localStorage.setItem('playerId', playerId);
     else localStorage.removeItem('playerId');
@@ -83,11 +83,11 @@ export const GameProvider = ({ children }) => {
     if (batna !== null) localStorage.setItem('batna', String(batna));
   }, [batna]);
 
-  // ---- socket init (Render safe) ----
+  
   useEffect(() => {
     const raw = import.meta.env.VITE_API_URL;
 
-    // IMPORTANT: must be your backend web service, not the client URL
+    
     const serverUrl = (raw || '').trim().replace(/\/+$/, '');
 
     if (!serverUrl) {
@@ -97,7 +97,7 @@ export const GameProvider = ({ children }) => {
     }
 
     const newSocket = io(serverUrl, {
-      // WebSocket preferred, but allow polling fallback (more reliable on cold start)
+      
       transports: ['websocket', 'polling'],
       withCredentials: true,
 
@@ -117,7 +117,7 @@ export const GameProvider = ({ children }) => {
       const savedPlayerId = localStorage.getItem('playerId');
       const savedPairId = localStorage.getItem('pairId');
 
-      // only try to reconnect if we had an active game
+      
       if (savedPlayerId && savedPairId) {
         console.log('🔄 Attempting to reconnect player:', savedPlayerId);
         newSocket.emit('reconnect_player', { playerId: savedPlayerId });
@@ -131,7 +131,7 @@ export const GameProvider = ({ children }) => {
 
     newSocket.on('disconnect', (reason) => {
       console.log('⚠️ Disconnected:', reason);
-      // don't spam
+      
       toast.warn('Disconnected. Trying to reconnect...', { autoClose: 4000 });
     });
 

@@ -1,138 +1,170 @@
-1. Mục tiêu của trò chơi
-Trò chơi mô phỏng một tình huống đàm phán hai bên, dựa trên thí nghiệm gốc “Fahrrad-Verhandlungsspiel”.
- Hai người, A và B, mỗi người sở hữu một phần của chiếc xe đạp.
- Chỉ khi hợp tác, họ mới có thể bán chiếc xe đạp hoàn chỉnh trị giá 1.000 €.
- Họ phải đàm phán để quyết định cách chia số tiền 1.000 €.
- Mục tiêu là đạt được thỏa thuận – hoặc thất bại nếu không đạt được thỏa thuận.
 
-2. Màn hình giới thiệu
-Màn hình bắt đầu hiển thị đoạn giới thiệu ban đầu:
-Welcome to the Bicycle Negotiation Game!
+
+### 1. Objective of the Game
+
+The game simulates a **two-party negotiation scenario**, based on the original experiment **“Fahrrad-Verhandlungsspiel”**.
+
+Two people, **A and B**, each own one part of a bicycle.
+Only by **cooperating** can they sell the complete bicycle worth **€1,000**.
+
+They must negotiate to decide **how to divide the €1,000**.
+
+The objective is to **reach an agreement – or fail if no agreement is reached**.
+
+---
+
+### 2. Introduction Screen
+
+The start screen displays the following introduction:
+
+**Welcome to the Bicycle Negotiation Game!**
+
 Two people (A and B) each own one component of a bicycle:
+
 Person A: owns the bicycle wheels (€200)
-
-
 Person B: owns the bicycle frame (€600)
 
+Only together can they assemble a complete bicycle and sell it for **€1,000**.
 
-Only together can they assemble a complete bicycle and sell it for €1,000.
- They must decide how the €1,000 should be divided between them if a negotiation takes place.
-For this negotiation, both parties also receive an alternative selling option.
- If the negotiation fails, this alternative option is automatically activated.
+They must decide **how the €1,000 should be divided between them** if a negotiation takes place.
 
-Sau đoạn văn xuất hiện một nút:
- 👉 “Bắt đầu trò chơi”
+For this negotiation, both parties also receive **an alternative selling option**.
+If the negotiation fails, this alternative option is automatically activated.
 
-3. Phân vai và mã nhận dạng cặp
-Phân vai tự động
- Khi vào trò chơi, hệ thống tự động phân vai:
-Một người là Người A
+After this text appears a button:
 
+👉 **“Start the Game”**
 
-Một người là Người B
+---
 
+### 3. Role Assignment and Pair Identification
 
-Mỗi người chơi nhận một mã ID riêng (ví dụ: Player_0123)
+#### Automatic Role Assignment
 
+When entering the game, the system automatically assigns roles:
 
-Hệ thống ghép ngẫu nhiên hai người thành một cặp đàm phán
+One player becomes **Person A**
+One player becomes **Person B**
 
+Each player receives a **unique player ID** (for example: `Player_0123`).
 
-Mã định danh cặp
- Mỗi cặp nhận một mã Pair-ID (ví dụ: Pair_01, Pair_02, …).
- Mã này dùng để xác định hai người chơi nào đã đàm phán với nhau.
+The system randomly matches two players into **a negotiation pair**.
 
-4. Nhóm chơi (Nhóm 1–4): riêng biệt 4 nhóm từ đầu để người chơi có thể chọn nhóm 1-4
-Có bốn nhóm riêng biệt, mỗi nhóm quy định phương án bán thay thế khác nhau cho Người B.
- Người chơi không biết ý nghĩa kinh tế thực sự (BATNA).
- Họ chỉ thấy câu:
-“Person B has the alternative selling option … €”
-Nhóm
-Người A
-Người B
-1
-0 €
-0 €
-2
-0 €
-300 €
-3
-0 €
-500 €
-4
-0 €
-600 €
+---
 
+#### Pair Identification Code
 
-Người A luôn có giá trị khởi điểm là 0 €.
+Each pair receives a **Pair-ID** (for example: `Pair_01`, `Pair_02`, etc.).
 
+This ID is used to identify **which two players negotiated with each other**.
 
-Người B chỉ biết mức tối thiểu mà họ mong muốn, không biết thuật ngữ “BATNA”.
+---
 
+### 4. Game Groups (Groups 1–4)
 
-Việc phân nhóm được thực hiện trước khi trò chơi bắt đầu.
+There are **four separate groups**, each defining a different **alternative selling option for Person B**.
 
+Players **do not know the real economic meaning (BATNA)**.
+They only see the sentence:
 
+**“Person B has the alternative selling option … €”**
 
-5. Quy trình đàm phán
-Loại trò chơi
- Mô phỏng đàm phán hai bên theo lượt.
-Người A và B lần lượt đưa ra đề nghị và phản hồi.
-Số vòng: Tối đa 10 vòng.
-Cấu trúc một vòng đàm phán
-Bước
-Hành động
-Mô tả
-1
-Người chơi đang giữ lượt (A hoặc B)
-Nhập đề nghị, ví dụ: “A: 400 €, B: 600 €”.
-2
-Người còn lại
-Chọn một trong bốn phản hồi:
-☐ Quá thấp ☐ Chấp nhận ☐ Có đề nghị tốt hơn ☐ Không chấp nhận
-3
-Kết quả vòng
-Nếu “Chấp nhận” hoặc “Không chấp nhận” → kết thúc trò chơi.
-Nếu “Quá thấp” hoặc “Có đề nghị tốt hơn” → đổi lượt.
+| Group | Person A | Person B |
+| ----- | -------- | -------- |
+| 1     | 0 €      | 0 €      |
+| 2     | 0 €      | 300 €    |
+| 3     | 0 €      | 500 €    |
+| 4     | 0 €      | 600 €    |
 
-Điều kiện kết thúc
-Một bên chọn “Chấp nhận” → đàm phán thành công.
+Person A always has a **starting value of 0 €**.
 
+Person B only knows **the minimum amount they expect**, but not the term **BATNA**.
 
-Một bên chọn “Không chấp nhận” → đàm phán thất bại.
+Group assignment happens **before the game begins**.
 
+---
 
-Hết 10 vòng mà chưa thống nhất → tự động thất bại.
+### 5. Negotiation Process
 
+#### Type of Game
 
+The game simulates **a turn-based bilateral negotiation**.
 
-6. Các lựa chọn phản hồi (Hành động)
-Bốn phản hồi theo mẫu gốc:
-Too low – That is too low for me, counteroffer.
+Person A and Person B **take turns making offers and responding**.
 
+Maximum number of rounds: **10 rounds**
 
-Accept – The offer is accepted, end of game.
+---
 
+### Structure of a Negotiation Round
 
-Better offer – I have a better offer outside the negotiation.
+| Step | Action                           | Description                                   |
+| ---- | -------------------------------- | --------------------------------------------- |
+| 1    | Player whose turn it is (A or B) | Enters an offer, e.g. “A: 400 €, B: 600 €”    |
+| 2    | Other player                     | Chooses one of four responses                 |
+| 3    | Round result                     | Determines whether the game continues or ends |
 
+Response options:
 
-Not accept – Negotiation is terminated, end of game.
-7. Màn hình hiển thị cuối - Result
-If sucessful:
-Negotiation successful!  
-Final distribution:  
-Person A: ___ €  
-Person B: ___ €  
-If failed
-Negotiation failed.  
-No agreement reached.  
-Person A receives 0 €  
-Person B receives their minimum demand (0 / 300 / 500 / 600 €) (tùy từng round)
+☐ Too low
+☐ Accept
+☐ Better offer
+☐ Not accept
 
+If **Accept** or **Not accept** → the game ends.
+If **Too low** or **Better offer** → the turn switches.
 
+---
 
-Mỗi hành động được ghi lại trong vòng tương ứng.
-Khi game kết thúc, hệ thống xuất tự động toàn bộ dữ liệu ra file Excel (.xlsx).
-Một hàng tương ứng một lượt (round).
+### End Conditions
 
+One player chooses **Accept** → negotiation successful.
+
+One player chooses **Not accept** → negotiation fails.
+
+If **10 rounds pass without agreement** → automatic failure.
+
+---
+
+### 6. Response Options (Actions)
+
+The four responses from the original experiment:
+
+**Too low** – That is too low for me, counteroffer.
+
+**Accept** – The offer is accepted, end of game.
+
+**Better offer** – I have a better offer outside the negotiation.
+
+**Not accept** – Negotiation is terminated, end of game.
+
+---
+
+### 7. Final Result Screen
+
+If successful:
+
+Negotiation successful!
+
+Final distribution:
+
+Person A: ___ €
+Person B: ___ €
+
+If failed:
+
+Negotiation failed.
+No agreement reached.
+
+Person A receives **0 €**.
+
+Person B receives **their minimum demand**
+(0 / 300 / 500 / 600 € depending on the group).
+
+---
+
+Each action is recorded in the corresponding **round**.
+
+When the game ends, the system automatically **exports all data to an Excel file (.xlsx)**.
+
+Each row in the Excel file represents **one negotiation round**.

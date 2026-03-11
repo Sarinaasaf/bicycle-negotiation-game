@@ -36,7 +36,7 @@ const ResultScreen = () => {
   };
 
   const handlePlayAgain = () => {
-    // Reset game state and go back to group selection
+    
     navigate('/select-group');
   };
 
